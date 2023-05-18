@@ -1,0 +1,15 @@
+기본 약어 풀이 후 설명
+TCP: Transmission Control Protocol
+UDP: User Datagram Protocol
+
+OSI 7 Layer: Open System Interconnection 7 Layer
+
+OSI 7 Layer로 나누는 이유?
+통신이 일어나는 과정을 단계 별로 파악할 수 있기 때문이다. 흐름을 한 눈에 알아보기 쉽고, 사람들이 이해하기 쉽고,  7단계 중 특정한 곳에 이상이 생기면 다른 단계의 장비 및 소프트웨어를 건드리지 않고도 이상이 생긴 단계만 고칠 수 있다.
+
+각 계층의 역할과 이름 숙지.
+
+TCP/IP 레이어는 4계층으로 따로 나누어 놓음.
+
+책 36p에 있으니 숙지.(시험 문제에도 나오니 7레이어와 TCP 4단계의 차이와 동일점 숙지)
+

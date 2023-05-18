@@ -1,0 +1,5 @@
+TCP/IP나 7레이어에 어플리케이션(7단계)에서
+
+■파일 트랜스퍼 중 NFS(Network File System) - 리눅스 기반의 AWS에서 사용
+
+SMB: windows 기반의 File Transfer
