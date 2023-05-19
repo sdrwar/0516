@@ -4,6 +4,7 @@
 [로컬] [브로드캐스트] [OUI : 22bits] [Vendor Assigned : 22bits]
 OUI의 앞은 따로 구매해야한다.
 OUI는 제조사의 식별
+OUI(Organizationally Unique Identifier)
 
 IP 주소 구매 - 라우터,네트워크 엔지니어필요 - AS 번호 구매
 
