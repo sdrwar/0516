@@ -4,6 +4,7 @@ VLSM(Variable Length Subnet Mask, 가변길이 서브넷마스크)
 -서브네팅과 서브넷마스크 한 것을 라우터가 인식할 수 있도록 하는것.
 -95년도에 VLSM이 나오면서 라우터들이 VLSM을 인식할 수 있도록 해야했다.(현재는 VLSM을 인식하는 라우터들이 나오고 있다)
 표기법 CIDR로 표기 /28 /24등등
+http://www.ktword.co.kr/test/view/view.php?m_temp1=1826
 
 Private IP의 CIDR 표기법: A /8 B/12 C/16
 
