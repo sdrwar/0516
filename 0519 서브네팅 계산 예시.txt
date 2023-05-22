@@ -20,3 +20,6 @@ but 자리가 같지 않은 수는 통합 할 수 없다.(ex 110, 001)
 [https://conoca0504.tistory.com/24](https://conoca0504.tistory.com/24)
 
 http://korean-daeddo.blogspot.com/2016/01/blog-post_26.html
+
+1. 호스트 IP는 항상 짝수, 브로트캐스트 IP는 항상 홀수로 나온다.
+2. 서브네팅을 할 때에는 항상 크기가 큰것부터 나누어야 한다. 
