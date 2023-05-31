@@ -1,0 +1,329 @@
+■클라우드?
+-리눅스, 데이터베이스, 프로그래밍을 AWS(Amazon Web Services), Azure(MicroSoft), GCP(Google Cloud Platform)에서 실행하는 것
+-클라우드 업무의 80%는 Linux(Red Hat, Ubuntu 등)를 사용한다
+
+■리눅스
+배포판의 종류가 많다 -> 명령어가 조금씩 다르다 (기본적인 명령어는 같지만, 일부는 없거나 다르기도 하다)
+같은 배포판이어도 없는 명령어 달라진 라이브러리 등 -> 의존성의 문제가 있다(Dependancy)
+리눅스 오픈소스이므로 많은 개발자들의 재능기부로 만들어짐 -> 복잡하다
+rpm패키지가 편리했지만, 의존성 문제(설치 불가)문제로 yum, dnf등의 자동설치 기능이 제공되었다
+
+•의존성
+-OS를 제공하는 조직은 거대조직이다 -> 업데이트가 빠르다 (새로운 기능을 넣고 예전 기능을 빼버림)
+-Application을 제공하는 조직은 소규모 -> 업데이트가 느림(거의 안됨), 설치가 잘 안되기도 함
+
+■전날 내용 복습
+•파일찾기 : find
+일반 사용자 권한으로는 사용할 수 없으니 root 권한으로 전환해야 한다
+(파일들 중 권한이 없는 사용자들은 읽기 권한도 없는 경우가 많기 때문에)
+
+1. 이름찾기
+# find / -name "*sdr*" : sdr이 포함된 문자열을 찾아준다 (ex. /usr/share/system-config-printer/dnssdresolve.py)
+("* *"을 넣으면 일치하는 문자열을 찾아준다고 함 grep 명령어랑 비슷한 것 같다)
+-전체디렉토리(/)에서 sdr이 중간에 들어가는 모든 파일검색
+# find / -name "sdr" : sdr이라는 문자와 일치하는 것만 찾아준다 (ex. /home/sdr)
+-전체디렉토리(/)에서 sdr이라고 되어있는 파일만 검색
+
+2. 권한으로 찾기
+# find / -perm 644 : 권한이 644로 설정된 파일 등을 찾아준다 (rw-r--r--)
+•-perm은 find의 옵션
+
+3. MAC time으로 찾기
+# find / -ctime -5 : 생성한 후 5일이내인 파일 등을 검색
+# find / -mtime +10 : 수정한 후 10일이후인 파일 등을 검색
+# find / -atime -5 : 엑세스(접속 등)를 한지 5일이내의 파일 등을 검색
+
+4. find로 찾은 결과 처리 방법
+# find /home -name "txt" -exec rm {} \; : home 디렉토리에 있는 txt라는 이름의 파일을 삭제
+# find /home -size 100k -exec rm {} \; : home 디렉토리에 있는 사이즈가 100k인 파일들을 삭제
+# find /home -size -100k -exec ls -l {} \; : home 디렉토리에 있는 사이즈가 100k 이하인 파일들을 리스트로 상세히 표시
+
+※find  / -name "*AAA*"와 grep AAA의 차이점
+-find / -name "*AAA*" 는 파일 시스템에서 이름에 "AAA"라는 문자열을 포함한 파일이나 디렉토리를 검색
+1. 이 명령어는 현재 디렉토리부터 하위 디렉토리까지 모든 파일과 디렉토리에서 이름에 "AAA"라는 문자열이 포함된 항목을 검색합니다.
+2. find 명령어는 파일 시스템을 순회하며 조건에 맞는 항목을 찾아줍니다.
+3. -name "*AAA*"은 파일이나 디렉토리의 이름이 "AAA"라는 문자열을 포함하고 있으면 검색 대상에 해당됩니다.
+4. *는 와일드카드로 사용되며, 어떤 문자열이든 올 수 있음을 의미합니다.
+
+-grep AAA는 텍스트에서 "AAA"라는 문자열을 찾아 출력
+1. 이 명령어는 주어진 텍스트에서 "AAA"라는 문자열을 찾아 출력합니다.
+2. grep 명령어는 파일이나 표준 입력에서 특정 패턴을 찾아 줄(line)을 출력합니다.
+3. AAA는 찾고자 하는 문자열 패턴입니다
+
+■오전교육
+•awk(오크)
+-컬럼 단위로 골라서 보기 (데이터가 너무 많을 때 보고 싶은 것만 골라서 보기)
+
+# echo 44 33 22 11 | awk '{print $4,$3,$2,$1}'를 입력하면 프롬프트 창 밑에
+11 22 33 44
+순서로 표시된다. (에코로 입력한 메시지를 4번 3번 2번 1번 순서로 보여달라는 명령어)
+-중간에 $숫자를 누락하면 텍스트 중 $에 포함한 숫자 순서로만 보여준다
+
+# tail -10 /var/log/secure | awk '{print $5,$6}'
+->
+# cat /var/log/secure | awk '{print $1,$2}' | uniq -c
+->secure 디렉토리의 중복을 제거하고(uniq -c) , 중복된 갯수를 왼쪽에 표시함
+※|(파이프)앞은 조건 파이프 뒤는 실행 -> |가 여러개이므로 상대적으로 적용되고 반복
+
+•sed : 치환 등에 주로 많이 사용
+# sed -i 's/(old)/(new)/g' : (old)가 (new)로 치환됨
+
+sort -u는 갯수 표시는 하지않고 중복제거하는 명령어 (uniq -c는 중복개수를 표시하고 중복제거)
+sort 오름차순은 명령어 생략해도 된다 (-n을 적지 않아도 기본적으로 오름차순으로 정렬한다, 내림차순은 -rn)
+
+echo 명령어로 txt에 내용을 추가할때 > 파일명.txt 는 첫 줄에 추가, >> 파일명.txt면 그 다음줄에 추가인데
+작성된 txt 파일에 echo "메시지" > 파일명.txt를 다시 넣으면 모든 내용이 삭제되고 첫줄에 메시지라는 텍스트만 남게된다.
+
+■프로세스, 데몬, 서비스
+- HDD/SSD에 있던 파일이 메모리에서 실행중일 때 프로세스라고 함
+- Foreground : 전면에서 실행 중 -> 사람눈에 보이게 실행
+- Background : 후면에서 실행 중 -> 사람눈에 보이지 않게 실행
+
+# ps -ef 실행되는 프로세스를 보여주는 명령어 (모든 프로세스 조회)
+uid: 사용자 이름
+pid: 프로세스 이름
+ppid: 내부적으로 쓰는 이름(알 필요 없다)
+문자의 끝이 d로 끝나면 Demon이라고 생각하면 된다 (눈에 보이지는 않지만, 서비스를 위해 대기하고 있는 프로그램)
+# ps -ef | grep gdm : 문자 중 gdm이 포함된 것 들만 보여준다 awk 명령어를 통해, 원하는 부분만 볼 수 있다 (ex | awk '{print $2,$7}' 추가)
+
+ㅁ프로세스의 종료
+# kill [PID] : 프로세스 정상 종료
+# kill -9 [PID] : 프로세스를 강제로 종료 (비권장) /정상 종료가 잘 안될때 (무한루프 또는 악성코드인 경우)
+# kill -l
+
+# pstree 
+- 부모자식간 프로세스를 트리 모양으로 보여줌
+# ps -ef | grep [찾을프로세스]로 프로세스를 찾아 맨 앞의 유저이름 다음으로 오는 숫자를
+# pstree 찾은숫자를 하면 pstree를 볼 수 있다
+-su : swich user 유저 변경의 약자
+실습은 파이어폭스를 켜고 ps -ef로 번호 확인 후 아무 번호나 pstree 번호로 부모 프로세스 트리를 확인했다
+파이어폭스를 종료 후 다시 번호 확인 후 부모프로세스를 찾아보니 아무내용도 나오지 않은 것을 확인
+
+# top (윈도우의 작업관리자라고 보면 될 것 같다)
+실시간으로 2초에 한번씩 프로세스를 출력해서 보여주는 명령어
+맨 윗 부분에서 id는 idle 놀고있다는 뜻(비활성화), us는 usage 활성화가 된 프로세스의 %를 보여준다.
+zombie는 역할을 제대로 하지 못하지만, 사라지지 않고 남아있는 프로세스의 갯수를 나타낸다 (없어야 정상, 있으면 제거해야 함 kill [pid]해서)
+종료할 때는 q
+
+-명령어 뒤에 &(앰퍼샌드)를 붙이면 백그라운드에서 실행된다
+(시간이 많이 걸리는 작업에서 사용: 압축이나 압축해제 등)
+-vi를 주로 사용하고 gedit는 가급적 사용을 안하는 것으로 하겠습니다.
+
+* 서비스
+- 데몬(Daemon)이 메모리에 상주하면서 서비스를 해주는 역할
+(데몬은 백그라운드에서 실행되는 컴퓨터 프로그램으로 시스템 서비스를 제공하고 유지, 약간 백그라운드에 있는 프로세스 바로가기 같은 개념인 듯)
+- 웹서비스, 메일서비스, 파일전송서비스 등을 해주기 위해서 메모리에 데몬이 항상 실행 중
+
+* 서비스와 소켓
+- Socket : 서비스를 실행하기 위해서 서비스를 뒷받침하는 역할
+(프로세스 간 통신을 위한 인터페이스로서 네트워크 통신 또는 프로세스 간 통신을 담당)
+- Socket : IP주소(L3)와 Port번호(L4)의 조합 (서비스는 L7)
+
+http 서비스의 데몬은 httpd ( d = daemon )
+ftp 서비스의 데몬은 ftpd
+ssh 서비스의 데몬은 sshd : sshd가 메모리에서 실행중인 프로세스로서 누가 ssh서비스를 원하면 응답을 해줌
+mysql 서비스의 데몬은 mysqld
+
+※소켓은 데이터 통신을 위한 인터페이스이고, 데몬은 시스템 관리 및 서비스 제공을 위한 프로그램
+
+* 서비스 설정
+# systemctl start/stop/restart 서비스이름 : restart는 동작을 안하고 있건 하고 있건 시작해주기 때문에 restart를 자주 사용한다
+# systemctl status 서비스이름 : 프로세스의 상태를 표시해준다
+# systemctl enable/disable 서비스이름 : 시스템 서비스나 유닛의 부팅 시 동작을 제어할 수 있습니다 (부팅 시 자동시작/자동시작안함)
+
+# cd /usr/lib/systemd/system
+
+소켓만 보려면?
+# find . -name "*.socket"
+# less sshd.socket
+# service sshd start : ssh 서비스가 실행됨
+# netstat -na | less : 22번포트에서 ssh가 실행중임을 확인할 수 있음
+
+실습) 윈도우 터미널을 열고 SSH서비스로 접속해보기
+# ssh 192.168.5.100 -l twice ( -l : login )
+ (CentOS의 공개키의 해쉬값(SHA256)을 보여주면서 맞냐고 물어봄... yes라고 입력)
+ (twice의 패스워드를 물어봄 : cheerup 입력)
+[twice@localhost ~]$ : twice 권한으로 명령 입력 가능
+[twice@localhost ~]$ who :현재 시스템에 접속한 사용자를 보여달라
+blackpink tty2 2020-12-18 09:37 (tty2) : tty : 터미널---> 콘솔(현장에 있음) 
+tty1, tty2, tty3, tty4, ... (여러명이 콘솔)
+twice pts/1 2020-12-18 16:23 (192.168.5.1) : pts : 원격 접속 ---> IP주소가 보여짐
+[twice@localhost ~]$ exit : 접속 종료됨
+
+실습) 누가 접속했나 확인해보기
+[root@localhost system]# lastlog
+twice pts/1 192.168.5.1 Fri Dec 18 16:23:51 +0900 2020
+ ( KST : Korea Standard Time = 기준시보다 +9시 , 기준시 : 그리니치 천문대, 런던, 영국)
+# ssh 192.168.5.100 -l bts : 이미 앞에서 서버의 공개키는 저장했으므로 해쉬값이
+맞는지는 물어보지 않음
+# cat /etc/passwd : passwd의 권한은 644이므로 일반사용자도 읽을 수
+있음
+# pwd
+# exit
+# ps -ef | grep sshd : 프로세스 중에서 검색
+# netstat -nap | less : n : number, a : all, p : process ----> 프로세스ID(PID)와 프로세스 이름까지 보임
+
+
+
+254p~262p
+
+응급복구
+책 262p~256p까지 상세히 설명
+
+■부팅 (268p)
+-GRUB 부트로더 : 부팅 시 나오는 처음화면
+* ISO 이미지로 부팅 ---> Live Booting (설치하지 않고 운영체제를 메모리에 로드)
+
+실습) vi를 이용해서 /etc/default/grub 파일을 변경해 보기
+# vi /etc/default/grub
+ i 
+ GRUB_TIMEOUT=20
+ ESC
+ :wq
+* 변경 내용을 적용하기
+# grub2-mkconfig -o /boot/grub2/grub.cfg
+# reboot
+ ( 20초 카운트 하고 부팅 )
+
+▶정리하면, wc:개수를 세는 것, sort:정렬하는 것, awk:골라내기(텍스트 파일이나 표준 입력에서 데이터를 읽어들여 각 줄을 필드로 분리하고, 패턴과 조건에 따라 원하는 동작을 수행)
+sed:치환, process 확인방법: ps (-ef, aux 등), top:프로세스를 실시간으로 보여줌(윈도우 작업관리자처럼)
+
+■오후수업
+•비밀번호 변경해보기
+
+실습) 비밀번호 설정하기 : 아무나 grub편집을 못하게 하기 위해서 필요 (부팅은 다 가능)
+# vi /etc/grub.d/00_header
+(맨 아랫줄로 이동해서 아래와 같이 내용을 추가합니다.)
+cat << EOF
+set superusers="thisislinux"
+password thisislinux 1234
+EOF
+:wq
+
+* 변경 내용을 적용하고 재부팅
+# grub2-mkconfig -o /boot/grub2/grub.cfg
+# reboot
+
+-커널 컴파일 부분은 넘어감
+-xwindow도 넘어감(서버용 운영체제에서 쓸 일이 없기 때문이라고 함) 책 내용 중
+
+암호화가 안되는 프로토콜: Telnet, FTP, http(80), SMTP 메일 보내는 프로토콜, POP 메일 확인 프로토콜, IMAP, rlogin -> sniffing(서비스 도청)
+암호화가 되는 프로콜: SSH(Secure Shell), https(443), VPN 등을 권장
+
+•MySQL
+-Oracle에서 Sun Microsystem을 인수 -> Java를 만든 Sun을 인수 (마이크로시스템은 솔라리스 만듦)
+-MariaDB: MySQL도 유료화가 될까봐 만듦, 98%가 비슷함(개선 된 버전이라고 함)
+-Ubuntu에서는 MySQL, CentOS, Amazon Linux에서는 Mariadb를 사용
+
+ㅁ서버 설치 (APM 설치와 웹 사이트 구축)
+
+실습) dnf를 사용해서 APM 설치하기
+-httpd (Apache), php, MariaDB 설치 여부 확인
+# rpm -qa httpd php mariadb-server 입력 후 아무 응답이 없으면 설치가 되어있지 않은 상태
+
+-dnf를 이용해 APM 설치
+# dnf -y install httpd php php-mysqlnd mariadb-server
+(Debian 계열에서는 httpd라고 하지 않고, apache2라고 함)
+
+윈도우 프로토콜을 이용해 리눅스 계정에 접속하여 설치를 해도 vm웨어 워크스테이션에서 확인해도 설치되었다고 나옴.
+
+아마존 등 클라우드 업체들도 다 미리 확인해보고 되는 버전으로만 서비스함 ---> 지원되는 버전이 따로 있음
+-설치 확인 및 시작하기
+# systemctl status httpd : 설치 상태 확인
+# systemctl start httpd : httpd 시작
+
+* 웹서버의 루트 디렉토리 (Root Directory)
+/var/www/html : 파일을 넣으면 웹브라우저로 보여짐
+step3)
+gedit 보다는 vi를 많이 사용 권장
+cd /var/www/html
+vi index.html
+i : 편집모드 시작
+<html>
+<body>
+<h1> This is my website. Welcome!! <br> 어서오세요. 반갑습니다. </h1> (한영 전환 : shift+space)
+</body>
+</html>
+ESC
+:wq
+한 후 웹사이트(파이어폭스 등등)로 로컬PC의 IP로 접속하여 적용 확인
+
+-웹사이트에 이미지 넣기
+<img src=이미지이름.jpg>를 입력하고 저장하고 종료
+
+ㅁ웹서버가 동작하지 않으면?
+1. Apache가 동작하는가?
+# systemctl status httpd를 입력하여 inactive로 나오면
+# systemctl restart httpd를 입력한다
+2. Firefox에서는 접속이 되는데 Edge에서는 접속이 안된다면?
+# firewall-config로 permanent로 하고 http와 https체크 후 Reload Firewall을 하여 적용
+(스샷으로 찍어둠)
+
+방화벽 설정으로 http, https 권한 얻기
+방화벽 해제
+접속이 안되는 이유는 Linux 방화벽이 외부로부터의 연결을 막기 때문
+
+-터미널에서 직접 방화벽 해제 하는 방법
+# firewall-cmd  --permanent  --add-service=http
+# firewall-cmd  --permanent  --add-service=https
+# firewall-cmd  --reload -> 리로드를 해야 적용
+
+ㅁ워드프레스를 이용한 웹사이트 구축하기
+-최초 mysql 접속을 하면 비밀번호를 입력하라고 나오는데 엔터치고 넘어가면 된다
+DB유저는 외부에서 활동할 수 없다, local에서만 활동할 수 있다
+DB명령어의 끝은 항상 ;(세미콜론)을 입력해야 끝낼 수 있다 (세미콜론을 입력하지 않으면 그 다음 명령어로 이어지게 된다)
+exit로 나올 수 있다
+
+참고) DB권한을 root로 사용하면 DB가 해킹될 우려가 있음 (SQL injection 공격 우려)
+# systemctl restart mariadb 
+# systemctl enable mariadb
+# systemctl status mariadb -> 상태 확인해보기 (확인 후 q를 누르면 종료됨)
+# mysql -u root –p : maria DB 시작
+참고) MariaDB? MySQL이 오라클로 넘어가면서 기존에 있던 개발자들이 나와서 따로 MariaDB를 만들어서 GPL로 배포중
+- MySQL과 MariaDB는 호환되도록 하고 있음 (명령어도 동일함)
+# mysql로 들어가 처음 나오는 메시지는 엔터로 무시하고
+# create database wpDB; : 웹DB생성
+# grant all privileges on wpDB.* to wpUser@localhost identified by '1234'; : 사용자와 비밀번호 생성
+q를 눌러 종료 후
+
+# cd /var/www/html
+# wget https://ko.wordpress.org/latest-ko_KR.tar.gz
+# tar zxvf latest<tab>
+
+-디렉토리 권한 변경
+# chmod 707 wordpress
+
+-파일 소유자를 apache로 변경
+# chown -R apache.apache wordpress
+# cd wordpress
+# cp wp-config-sample.php wp-config.php : sample만 제거, cp대신에 mv를 사용해도 됨
+# vi wp-config.php
+:set nu -> 라인번호 왼쪽에 보임
+ ~~_here부분을 순서대로 wpDB, wpUser, 1234로 변경
+:wq
+* 웹서버 설정파일을 수정
+# vi /etc/httpd/conf/httpd.conf
+:set nu
+ ( WebServer의 Root Directory 변경)
+:wq
+# dnf install php-json : CentOS8에서 Wordpress 에러 교정 방법
+# systemctl restart httpd : 아파치 재시작(변경내용을 적용하기 위함)
+
+step2) 워드프레스 설정
+http://192.168.111.100/wp-admin/ : 관리자 페이지 (글쓰기)
+http://192.168.111.100/ : 일반 사용자에게 보여지는 페이
+
+# cp wp-config-sample.php wp-config.php : sample파일을 config파일로 변경
+username_here <- 이 부분들만 변경
+
+-웹 서버 설정파일 수정
+34번 라인은 두고 122번, 134 라인을 변경, 154행은 None을 All로 변경 (대소문자구분) - 637p 중간내용이라고 함 (# vi ~httpd.conf 수정시)
+수정 후 시스템 컨트롤 명령어로 리스타트 httpd 하고, 스테이터스로 상태 확인 (초록색 액티브로 나와야 함)
+
+워드프레스 설치를 위한 사이트 접속이 되지 않을때,
+vi 편집기로 설정했을때, 대소문자가 확실했는지 확인 후 
+# mysql
+# show databases; -> 4개가 깔린 것을 확인 한 후
+# grant all privileges on wpDB.* to wpUser@localhost identified by '1234'; <- 정확하게 썼는지 확인 (대소문자+* 다음 공란 local 스펠링 맞는지 확인)
+-이때는 *to로 적어 되지 않았다, lacol로 적어 앞 뒤 자음을 바꿔놨었다
+Query OK, 0 rows affected (0.003 sec) 메시지 확인 후 다시 접속해보기 (나갈땐 exit)

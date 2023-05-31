@@ -1,0 +1,136 @@
+{\rtf1\ansi\ansicpg949\deff0\nouicompat\deflang1033\deflangfe1042{\fonttbl{\f0\fnil\fcharset129 \'b8\'bc\'c0\'ba \'b0\'ed\'b5\'f1;}}
+{\colortbl ;\red0\green0\blue255;}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\sl240\slmult1\f0\fs24\lang18 5\lang1042\'bf\'f9 31\'c0\'cf \par
+\par
+* \'c5\'ac\'b6\'f3\'bf\'ec\'b5\'e5\par
+- \'b8\'ae\'b4\'aa\'bd\'ba, \'b5\'a5\'c0\'cc\'c5\'cd\'ba\'a3\'c0\'cc\'bd\'ba, \'c7\'c1\'b7\'ce\'b1\'d7\'b7\'a1\'b9\'d6\'c0\'bb AWS, MS-Azure, GCP\'bf\'a1\'bc\'ad \'bd\'c7\'c7\'e0\'c7\'cf\'b4\'c2 \'b0\'cd\par
+\par
+* \'b8\'ae\'b4\'aa\'bd\'ba\par
+- \'b9\'e8\'c6\'f7\'c6\'c7 \'c1\'be\'b7\'f9\'b0\'a1 \'b8\'b9\'c0\'bd ----> \'b8\'ed\'b7\'c9\'be\'ee\'b0\'a1 \'c1\'b6\'b1\'dd\'be\'bf \'b4\'d9\'b8\'a7 (\'b1\'e2\'ba\'bb \'b8\'ed\'b7\'c9\'be\'ee\'b4\'c2 \'b0\'b0\'c1\'f6\'b8\'b8, \'c0\'cf\'ba\'ce \'be\'f8\'b0\'c5\'b3\'aa \'b4\'d9\'b8\'a3\'b1\'e2\'b5\'b5 \'c7\'d4)\par
+- \'b0\'b0\'c0\'ba \'b9\'e8\'c6\'f7\'c6\'c7\'c0\'cc\'be\'ee\'b5\'b5 \'be\'f8\'b4\'c2 \'b8\'ed\'b7\'c9\'be\'ee, \'b4\'de\'b6\'f3\'c1\'f8 \'b6\'f3\'c0\'cc\'ba\'ea\'b7\'af\'b8\'ae \'b5\'ee\'b5\'ee ----> \'c0\'c7\'c1\'b8\'bc\'ba(Dependancy) \par
+- \'b8\'ae\'b4\'aa\'bd\'ba \'bf\'c0\'c7\'c2 \'bc\'d2\'bd\'ba\'c0\'cc\'b9\'c7\'b7\'ce \'b8\'b9\'c0\'ba \'b0\'b3\'b9\'df\'c0\'da\'b5\'e9\'c0\'c7 \'c0\'e7\'b4\'c9 \'b1\'e2\'ba\'ce\'b7\'ce \'b8\'b8\'b5\'e9\'be\'ee\'c1\'fc ---> \'ba\'b9\'c0\'e2...\par
+- rpm\'c6\'d0\'c5\'b0\'c1\'f6\'b0\'a1 \'c6\'ed\'b8\'ae\'c7\'df\'c1\'f6\'b8\'b8 \'c0\'c7\'c1\'b8\'bc\'ba \'b9\'ae\'c1\'a6(\'bc\'b3\'c4\'a1\'ba\'d2\'b0\'a1)\'b7\'ce yum, dnf \'b5\'ee\'c0\'c7 \'c0\'da\'b5\'bf\'bc\'b3\'c4\'a1 \'b1\'e2\'b4\'c9\'c0\'cc \'c1\'a6\'b0\'f8\'b5\'ca\par
+\par
+* \'c0\'c7\'c1\'b8\'bc\'ba\par
+- OS\'b8\'a6 \'c1\'a6\'b0\'f8\'c7\'cf\'b4\'c2 \'c1\'b6\'c1\'f7\'c0\'ba \'b0\'c5\'b4\'eb\'c1\'b6\'c1\'f7 ----> \'be\'f7\'b5\'a5\'c0\'cc\'c6\'ae \'ba\'fc\'b8\'a7 (\'bb\'f5\'b7\'ce\'bf\'ee \'b1\'e2\'b4\'c9\'c0\'bb \'b3\'d6\'b0\'ed \'bf\'b9\'c0\'fc \'b1\'e2\'b4\'c9\'c0\'bb \'bb\'a9\'b9\'f6\'b8\'b2)\par
+- Application\'c0\'bb \'c1\'a6\'b0\'f8\'c7\'cf\'b4\'c2 \'c1\'b6\'c1\'f7\'c0\'ba \'bc\'d2\'b1\'d4\'b8\'f0 ----> \'be\'f7\'b5\'a5\'c0\'cc\'c6\'ae \'b4\'c0\'b8\'b2(\'b0\'c5\'c0\'c7 \'be\'c8\'b5\'ca) ---> \'bc\'b3\'c4\'a1\'b0\'a1 \'c0\'df\'be\'c8\'b5\'c7\'b1\'e2\'b5\'b5 \'c7\'d4\par
+\par
+* \'c6\'c4\'c0\'cf \'c3\'a3\'b1\'e2 : find\par
+- \'c0\'cf\'b9\'dd\'bb\'e7\'bf\'eb\'c0\'da \'b1\'c7\'c7\'d1\'c0\'b8\'b7\'ce\'b4\'c2 \'bb\'e7\'bf\'eb\'c7\'d2 \'bc\'f6 \'be\'f8\'c0\'bd \par
+- root\'b1\'c7\'c7\'d1\'c0\'bb \'c0\'cc\'bf\'eb\'c7\'d8\'be\'df \'c7\'d4  (\'c6\'c4\'c0\'cf\'b5\'e9 \'c1\'df\'bf\'a1 \'b1\'c7\'c7\'d1\'c0\'cc \'c0\'cf\'b9\'dd\'bb\'e7\'bf\'eb\'c0\'da\'b4\'c2 \'c0\'d0\'b1\'e2 \'b1\'c7\'c7\'d1\'b5\'b5 \'be\'f8\'b4\'c2 \'b0\'e6\'bf\'ec\'b0\'a1 \'b8\'b9\'b1\'e2 \'b6\'a7\'b9\'ae)\par
+1) \'c0\'cc\'b8\'a7\'c0\'bb \'c3\'a3\'b1\'e2\par
+# find  /  -name  "*passwd*"               // \'c0\'fc\'c3\'bc\'b5\'f0\'b7\'ba\'c5\'e4\'b8\'ae(/)\'bf\'a1\'bc\'ad twice\'b0\'a1 \'c1\'df\'b0\'a3\'bf\'a1 \'b5\'e9\'be\'ee\'b0\'a1\'b4\'c2 \'b8\'f0\'b5\'e7 \'c6\'c4\'c0\'cf\'b0\'cb\'bb\'f6\par
+# find  /  -name  "passwd"                      // \'c0\'fc\'c3\'bc\'b5\'f0\'b7\'ba\'c5\'e4\'b8\'ae(/)\'bf\'a1\'bc\'ad twice\'b6\'f3\'b0\'ed \'b5\'c7\'be\'ee\'c0\'d6\'b4\'c2 \'c6\'c4\'c0\'cf\'b8\'b8 \'b0\'cb\'bb\'f6\par
+\par
+2) \'b1\'c7\'c7\'d1\'c0\'b8\'b7\'ce \'c3\'a3\'b1\'e2\par
+# find  /  -perm  600\par
+# find  /  -perm  007                         // \'bf\'c0\'b3\'ca\'b5\'b5 \'c0\'d0\'c0\'bb \'bc\'f6 \'be\'f8\'b4\'c2\'b5\'a5, \'c0\'cf\'b9\'dd\'bb\'e7\'bf\'eb\'c0\'da\'b8\'b8 \'c0\'d0\'b1\'e2,\'be\'b2\'b1\'e2,\'bd\'c7\'c7\'e0 \'b0\'a1\'b4\'c9\par
+\par
+3) MAC\'c5\'b8\'c0\'d3\'c0\'b8\'b7\'ce \'c3\'a3\'b1\'e2\par
+# find  /  -ctime   -10                        // \'bb\'fd\'bc\'ba\'bd\'c3\'b0\'a3(creation time)\'c0\'cc 10\'c0\'cf \'c0\'cc\'b3\'bb\'c0\'ce \'c6\'c4\'c0\'cf\'c0\'bb \'b0\'cb\'bb\'f6\par
+# find  /  -mtime  -3                          // \'bc\'f6\'c1\'a4\'bd\'c3\'b0\'a3(modify time)\'c0\'cc 3\'c0\'cf \'c0\'cc\'b3\'bb\'c0\'ce \'c6\'c4\'c0\'cf\'c0\'bb \'b0\'cb\'bb\'f6\par
+# find  /  -atime  +100                       // \'c1\'a2\'b1\'d9\'bd\'c3\'b0\'a3(access time)\'c0\'cc 100\'c0\'cf\'c0\'cc \'b3\'d1\'c0\'ba \'c6\'c4\'c0\'cf\'c0\'bb \'b0\'cb\'bb\'f6\par
+\par
+cf. \'b0\'b3\'bc\'f6\'b8\'a6 \'c8\'ae\'c0\'ce\'c7\'cf\'b0\'ed \'bd\'cd\'c0\'b8\'b8\'e9  | \'b5\'da\'bf\'a1 wc -l \'c0\'bb \'bb\'e7\'bf\'eb \par
+    #  find  /  -atime  +100  |  wc -l\par
+\par
+\lang18 4) find\lang1042\'c7\'d1 \'b0\'e1\'b0\'fa\'b8\'a6 \'be\'ee\'b6\'bb\'b0\'d4 \'c3\'b3\'b8\'ae\'c7\'d2\'b1\'ee?\par
+\lang18 # find  /home  -name "*.txt"  -exec rm \{ \}  \\;\par
+# find  /home  -size  +100k   -size  -1000000k  \par
+\par
+cf. \lang1042\'bc\'ad\'be\'e7\'bf\'a1\'bc\'ad\'b4\'c2 000\'b4\'dc\'c0\'a7\'b7\'ce \'b4\'dc\'c0\'a7\'b0\'a1 \'b4\'de\'b6\'f3\'c1\'fc,  000=k,   000,000=M,  000,000,000=G,  000,000,000,000=T\lang18\par
+    \lang1042\'b5\'bf\'be\'e7\'bf\'a1\'bc\'ad\'b4\'c2 0000\'b4\'dc\'c0\'a7\'b7\'ce \'b4\'dc\'c0\'a7\'b0\'a1 \'b4\'de\'b6\'f3\'c1\'fc,  0000=\'b8\'b8,  0000,0000=\'be\'ef,  0000,0000,0000=\'c1\'b6\lang18\par
+\par
+   1000,0000,0000,0000\lang1042\'bf\'f8 = 1000\'c1\'b6 \lang18\par
+   1,000,000,000,000,000\lang1042\'bf\'f8 \lang18\par
+\par
+* AWK(\'bf\'c0\'c5\'a9;Aho Weinberger Kernighan)\par
+\par
+# echo Mina Sana Momo Dahyun | awk '\{print $4,$3,$1,$2\}'\par
+ ---->  Dahyun Momo Mina Sana\par
+\par
+# tail -10 /var/log/secure  |  awk '\{print $5,$6\}'\par
+\par
+# cat   /var/log/secure | awk '\{print $1,$2\}' | sort | uniq -c\par
+\par
+* | (\lang1042\'c6\'c4\'c0\'cc\'c7\'c1) \'be\'d5\'c0\'ba \'c1\'b6\'b0\'c7, | (\'c6\'c4\'c0\'cc\'c7\'c1) \'b5\'da\'b4\'c2 \'bd\'c7\'c7\'e0\'c7\'cf\'b0\'d4 \'b5\'ca ---> | \'b0\'a1 \'bf\'a9\'b7\'af\'b0\'b3 \'c0\'cc\'b9\'c7\'b7\'ce \'bb\'f3\'b4\'eb\'c0\'fb\'c0\'b8\'b7\'ce \'c0\'fb\'bf\'eb\'b5\'c7\'b0\'ed \'b9\'dd\'ba\'b9\par
+* uniq -c \'b4\'c2 \'c1\'df\'ba\'b9\'c0\'bb \'c1\'a6\'b0\'c5\'c7\'cf\'b0\'ed, \'c1\'df\'ba\'b9\'b5\'c8 \'b0\'b3\'bc\'f6\'b8\'a6 \'bf\'de\'c2\'ca\'bf\'a1 \'c7\'a5\'bd\'c3\'c7\'d4\par
+* sort\'b4\'c2 \'c1\'a4\'b7\'c4\'c0\'bb \'c7\'d1\'b4\'d9\'b4\'c2 \'c0\'c7\'b9\'cc\par
+* awk\'b4\'c2 \'c4\'c3\'b7\'b3 \'b4\'dc\'c0\'a7\'b7\'ce \'b0\'f1\'b6\'f3\'bc\'ad \'ba\'b8\'b1\'e2\par
+\par
+\lang18 uniq  -c  \lang1042\'c1\'df\'ba\'b9\'c0\'bb \'c1\'a6\'b0\'c5\'c7\'cf\'b0\'ed \'bf\'de\'c2\'ca\'bf\'a1 \'b0\'b3\'bc\'f6\'b8\'a6 \'c7\'a5\'bd\'c3\par
+sort  -u  \'c1\'df\'ba\'b9\'b8\'b8 \'c1\'a6\'b0\'c5\par
+\lang18\par
+# lastlog                             // \lang1042\'bb\'e7\'bf\'eb\'c0\'da\'b5\'e9\'c0\'c7 \'b8\'b6\'c1\'f6\'b8\'b7 \'b7\'ce\'b1\'d7\'c0\'ce \'bd\'c3\'b0\'a3, \'c1\'a2\'bc\'d3\'c7\'d1\'c0\'fb\'c0\'cc \'be\'f8\'c0\'b8\'b8\'e9 never logged in\par
+\par
+p.254~262 \'b1\'ee\'c1\'f6 \'c0\'d0\'b0\'ed \'c1\'a4\'b8\'ae\'c7\'cf\'b1\'e2\par
+\par
+\'bd\'c7\'bd\'c0) sed\'b9\'ae \'bb\'e7\'bf\'eb\'c7\'cf\'b1\'e2\lang18\par
+# cat /var/log/secure  |  awk '\{print $1\}'  |  sed 's/May/Santa/g'  |  sort  |  uniq -c  \par
+\par
+\par
+* root \lang1042\'c6\'d0\'bd\'ba\'bf\'f6\'b5\'e5 \'ba\'af\'b0\'e6\'c7\'cf\'b1\'e2\lang18\par
+init=/bin/sh                  // \lang1042\'c3\'ca\'b1\'e2\'bf\'a1 \'b7\'ce\'b1\'d7\'c0\'ce\'ba\'b8\'b4\'d9 \'bd\'a9\'ba\'ce\'c5\'cd \'b6\'e7\'bf\'ec\'b6\'f3\'b4\'c2 \'c0\'c7\'b9\'cc\par
+----> / \'b7\'e7\'c6\'ae \'b5\'f0\'b7\'ba\'c5\'e4\'b8\'ae\'b0\'a1 \'c0\'d0\'b1\'e2 \'bb\'f3\'c5\'c2\'c0\'d3 ----> mount\'b8\'a6 \'c0\'cc\'bf\'eb\'c7\'d8\'bc\'ad rw\'b7\'ce \'ba\'af\'b0\'e6 ---> \'ba\'f1\'b9\'d0\'b9\'f8\'c8\'a3 \'ba\'af\'b0\'e6 --> \'c0\'e7\'ba\'ce\'c6\'c3\par
+\par
+* \'be\'cf\'c8\'a3\'c8\'ad \'be\'c8\'b5\'c7\'b4\'c2 \'c7\'c1\'b7\'ce\'c5\'e4\'c4\'dd : Telnet, FTP, http(80), SMTP, POP, IMAP, rlogin  ----> Sniffing (\'b5\'a5\'c0\'cc\'c5\'cd \'b5\'b5\'c3\'bb)\par
+\par
+* \'be\'cf\'c8\'a3\'c8\'ad\'b0\'a1 \'c1\'f6\'bf\'f8\'b5\'c7\'b4\'c2 \'c7\'c1\'b7\'ce\'c5\'e4\'c4\'dd : SSH (Secure Shell),  https(443),  VPN \'b5\'ee\'b5\'ee ----> \'b1\'c7\'c0\'e5\par
+\par
+* MySQL\par
+- Oracle\'bf\'a1\'bc\'ad \'c0\'ce\'bc\'f6, Sun Microsystems\'b8\'a6 \'c0\'ce\'bc\'f6 ---> Java\'b0\'a1 \'bf\'c0\'b6\'f3\'c5\'ac \'bc\'d2\'c0\'af(?)\par
+\lang18 - MariaDB\lang1042\'b8\'a6 \'b8\'b8\'b5\'e9\'be\'fa\'b4\'c2\'b5\'a5, \'b8\'ed\'b7\'c9\'be\'ee \'b9\'d7 \'b1\'e2\'b4\'c9\'c0\'cc 98%\'b4\'c2 \'ba\'f1\'bd\'c1 (\'be\'e0\'b0\'a3 \'b0\'b3\'bc\'b1)\par
+- Ubuntu\'bf\'a1\'bc\'ad\'b4\'c2 MySQL,  CentOS, Amazon Linux\'bf\'a1\'bc\'ad\'b4\'c2 Mariadb\'b8\'a6 \'bb\'e7\'bf\'eb\par
+\lang18\par
+* APM\par
+- Linux\lang1042\'bf\'eb\lang18  Apache2 + PHP + MySQL(MariaDB)  ----> LAMP\lang1042\'b6\'f3\'b0\'ed\'b5\'b5 \'c7\'d4\par
+- \'c0\'a5\'bc\'ad\'b9\'f6\'b8\'a6 \'b8\'b8\'b5\'e5\'b4\'c2 \'c6\'d0\'c5\'b0\'c1\'f6\par
+\par
+\lang18 * Server\lang1042\'bf\'cd Client\'b4\'c2 \'c4\'c4\'c7\'bb\'c5\'cd\'b0\'a1 \'be\'c6\'b4\'d4, \'bb\'e7\'b6\'f7\'b5\'b5 \'be\'c6\'b4\'d4  -----> \'c7\'c1\'b7\'ce\'bc\'bc\'bd\'ba\par
+- Web Client(Chrome, Edge) -----> Web Server(Apache2, IIS, Nginx)\lang18\par
+\par
+# cd  /var/www/html\par
+# wget {{\field{\*\fldinst{HYPERLINK http://172.20.40.62/data/vw.jpg }}{\fldrslt{http://172.20.40.62/data/vw.jpg\ul0\cf0}}}}\f0\fs24\par
+# vi  index.html\par
+   <img src=vw.jpg>\par
+   :wq\par
+\par
+* \lang1042\'c0\'a5\'bc\'ad\'b9\'f6\'b0\'a1 \'b5\'bf\'c0\'db\'c7\'cf\'c1\'f6 \'be\'ca\'c0\'b8\'b8\'e9???\par
+1) Apache\'b0\'a1 \'b5\'bf\'c0\'db\'c7\'cf\'b4\'c2\'b0\'a1?    \par
+# systemctl  status  httpd        ------> inactive\'b7\'ce \'b3\'aa\'bf\'c0\'b8\'e9?\par
+# systemctl  restart  httpd\par
+2) Firefox\'bf\'a1\'bc\'ad\'b4\'c2 \'b5\'c7\'b4\'c2\'b5\'a5 \'bf\'dc\'ba\'ce\'c0\'c7 Windows\'bf\'a1 \'c0\'d6\'b4\'c2 Edge\'bf\'a1\'bc\'ad\'b4\'c2 \'c1\'a2\'bc\'d3\'c0\'cc \'be\'c8\'b5\'c7\'b8\'e9?\par
+# firewall-config\par
+   Permanent\'b7\'ce \'c7\'cf\'b0\'ed, http\'bf\'cd https\'bf\'a1 \'c3\'bc\'c5\'a9\'c7\'cf\'b0\'ed Options >  Reload Firewalld \'c7\'cf\'b8\'e9 \'b5\'ca\par
+\'b6\'c7\'b4\'c2 \'c5\'cd\'b9\'cc\'b3\'ce\'bf\'a1\'bc\'ad \'c1\'f7\'c1\'a2 \'c0\'d4\'b7\'c2\'c7\'cf\'b1\'e2\par
+# firewall-cmd  --permanent  --add-service=http\par
+# firewall-cmd  --permanent  --add-service=https\par
+# firewall-cmd  --reload                                             // \'b8\'ae\'b7\'ce\'b5\'e5\'b8\'a6 \'c7\'d8\'be\'df \'c0\'fb\'bf\'eb\'b5\'ca\par
+\par
+3) index.html \'c6\'c4\'c0\'cf\'c0\'cc \'c0\'a5\'bc\'ad\'b9\'f6 \'b7\'e7\'c6\'ae \'b5\'f0\'b7\'ba\'c5\'e4\'b8\'ae\'bf\'a1 \'c0\'d6\'b4\'c2\'c1\'f6?\par
+# ls -l  /var/www/html\par
+\lang18\par
+* \lang1042\'bf\'f6\'b5\'e5 \'c7\'c1\'b7\'b9\'bd\'ba \'bc\'b3\'c4\'a1\'c7\'cf\'b1\'e2 \'bf\'c0\'b7\'f9 \'c7\'d8\'b0\'e1\'b9\'e6\'b9\'fd\par
+1) DB\'bf\'ac\'b0\'e1\'c0\'cc \'be\'c8\'b5\'c7\'b8\'e9 \par
+# vi  wp-config.php\par
+    -----> wpDB, wpUser, 1234\par
+\par
+2) \'be\'c6\'c6\'c4\'c4\'a1 \'c0\'e7\'bd\'c3\'c0\'db\'c0\'cc \'be\'c8\'b5\'c9\'b6\'a7\par
+# systemctl  restart  httpd\par
+# vi /etc/httpd/conf/httpd.conf\par
+     34\'b9\'f8   /etc/httpd\par
+    122\'b9\'f8 \'b5\'ee \'bc\'f6\'c1\'a4  ---->  p.637 \'b3\'bb\'bf\'eb\'c0\'bb \'c2\'fc\'b0\'ed\'c7\'d8\'bc\'ad \'bc\'f6\'c1\'a4\par
+\par
+* \'b0\'fc\'b8\'ae\'c0\'da \'c6\'e4\'c0\'cc\'c1\'f6\par
+{{\field{\*\fldinst{HYPERLINK http://192.168.5.98/wp-admin/ }}{\fldrslt{http://192.168.5.98/wp-admin/\ul0\cf0}}}}\f0\fs24    ----> ID/PW\'b8\'a6 \'c0\'d4\'b7\'c2\'c7\'d8\'be\'df \'b5\'e9\'be\'ee\'b0\'a1\'c1\'fc\par
+\par
+\lang18 * \lang1042\'c0\'cf\'b9\'dd\'bb\'e7\'bf\'eb\'c0\'da\par
+{{\field{\*\fldinst{HYPERLINK http://192.168.5.98 }}{\fldrslt{http://192.168.5.98\ul0\cf0}}}}\f0\fs24\lang18\par
+\par
+\par
+\par
+\par
+\par
+}
+ 
