@@ -327,3 +327,5 @@ vi 편집기로 설정했을때, 대소문자가 확실했는지 확인 후
 # grant all privileges on wpDB.* to wpUser@localhost identified by '1234'; <- 정확하게 썼는지 확인 (대소문자+* 다음 공란 local 스펠링 맞는지 확인)
 -이때는 *to로 적어 되지 않았다, lacol로 적어 앞 뒤 자음을 바꿔놨었다
 Query OK, 0 rows affected (0.003 sec) 메시지 확인 후 다시 접속해보기 (나갈땐 exit)
+
+**웹서버와 워드프레스가 중요하다고 함**
