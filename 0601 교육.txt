@@ -1,0 +1,131 @@
+centos 삭제 후 재설치, wordpress까지 설치
+-설치의 디테일 적어두기
+
+오후
+ubuntu 설치
+책에는 없음
+
+ubuntu-22.04.2-desktop-amd64.iso 파일을 다운 받고
+vm웨어 워크스테이션에서 버츄얼 머신 만들기 후에 centos 했던 것 처럼 만들고
+에디트 눌러서 CD/DVD 목록에서 다운받은 우분투iso 파일 지정 후 플레이 버추얼 머신
+ubuntu설치.pdf 파일을 참고하여 설치하고 (한국어로 해도 되는듯함)
+에디트 디스플레이 설정에서 3d 꺼놓기
+
+■Ubuntu에서 작업
+$ sudo  apt  update                                // 최신버전이라 별로 업데이트 할 것이 없음
+$ sudo  apt  install  apache2                      // 웹서버 설치됨  ( y를 눌러줌)
+$ ip addr                                                // IP주소 확인
+$ cd  /var/www/html                                 // 웹서버 루트 디렉토리
+$ sudo  rm  index.html
+$ sudo  vi  index.html
+   <html>
+   <body>
+   <h1> Welcome to my website </h1>
+   </body>
+   </html>
+  ESC
+  :wq
+
+vi가 제대로 동작하지 않으면 
+$ sudo apt install vim을 시도해본다
+
+ㅁUbuntu에서 Firefox를 켜고 pixabay.com을 방문합니다.
+마음에 드는 이미지를 골라서 Download를 누르고 가장 작은 사이즈(640x480)를 선택해서 저장
+$ cd  /home/계정
+$ ls -l
+$ cd 다운로드
+$ sudo  cp  earth_34e35882f_640.jpg   /var/www/html/earth.jpg
+$ sudo  apt  install  vim
+$ cd  /var/www/html
+$ sudo  vi  index.html
+<html>
+<body bgcolor=pink>
+        <img src=earth.jpg>
+        <h1> Welcome to my website </h1>
+</body>
+</html>
+:wq
+
+실습) Ubuntu에 Gnuboard를 설치해봅니다.
+https://cafe.naver.com/cloudengineer/29
+
+$ sudo  apt  update    
+   (PW : ubuntu )
+   소프트웨어 업데이트 창이 뜨면 '나중에 알림'을 선택   ----> 제대로 동작 안할 수 있음
+$ sudo  apt  install  vim
+
+1) 웹서버 설치
+$ sudo  apt  install  apache2                     //  y입력후 엔터
+
+2) Database 설치 (MySQL 설치)
+$ sudo  apt  install  mysql-server
+$ sudo  mysql  -u root  -p                             // MySQL에 접속, 패스워드 없음 (그냥 엔터)
+mysql>  create  database  gnuboard;               // gnuboard라는 DB를 생성하기
+mysql>  show  databases;                              // 잘 만들어졌는지 확인
+mysql>  create  user  board@localhost  identified by 'cyber12#$';                // 사용자 및 비밀번호 생성
+mysql>  grant  all  privileges  on  gnuboard.*  to  board@localhost;            // board에게 gnuboard의 모든 테이블에 대한 권한부여
+mysql>  exit
+
+3) 웹서버에서 사용할 언어 설치
+$ sudo  apt  install   php   php-mysql   php-common  php-gd  php-fpm   php-xml  php-json  php-curl  git
+
+4) 게시판 소스 다운로드
+$ cd  /var/www/html
+$ sudo  git clone https://github.com/gnuboard/gnuboard5                 // github에 있는 gnuboard를 통째로 복제
+$ cd  gnuboard5
+$ sudo  mkdir  data                                                                   // 사용자들이 업로드할 데이터 디렉토리 생성
+$ sudo  chmod  707   data                                                          // 누구나 읽고 쓰기 가능하도록 설정
+
+5) 마무리
+$ sudo  apt  install  net-tools
+$ ifconfig                                         // ip주소 확인(복사)
+$ sudo  service  apache2  restart
+
+6) 게시판 설정
+http://192.168.X.130/gnuboard5/    -> 자신의 아이피 입력
+그누보드5 설치하기 클릭
+사용자 : board
+비밀번호 : cyber12#$
+DB명 : gnuboard
+웹사이트 관리자 admin/admin1234(최고관리자 항목에서 확인)
+-----> 이미지 업로드 및 게시물 업로드 하기
+
+■Ubuntu Server를 다운로드 방법
+1) Ubuntu.com에서 Download를 클릭 > GET Ubuntu Server >  Download Ubuntu 22.04.2 LTS
+
+2) 국내 미러 사이트
+http://mirror.kakao.com/ubuntu-releases/22.04.2  에서
+ubuntu-22.04.2-live-server-amd64.iso
+
+ㅁ우분투 서버
+버추얼머신 만드는것과 똑같은데 이름만 server
+에디트에서 디스플레이 3d 체크해제하고 프로세스 1개 사용으로 변경
+cd에서 다운받은 iso 파일 넣고 플레이
+
+우분투 서버는 마우스 조작이 안되므로 설치시 화살표를 이용하여 조작해야 함, 탭키도 먹힘
+x가 v체크표시 체크할땐 스페이스
+
+설치시 다른건 다 done으로 마치고 이름 설정만 하지만 
+인스톨 오픈 SSH 서버가 나오면 체크하고 done
+
+인스톨 컴플리트 나오면 리부트 나우를 선택해 재부팅
+
+로그인 화면이 뜨면 이름, 비밀번호 순서대로 입력 후 엔터
+$ ip addr로 아이피 주소 확인 후
+윈도우 명령 프롬프트에서 ssh IP주소 -l 서버아이디(sdrsv가 아닌 유저 아이디)
+접속했을때 해시값을 비교해야 하는데 vm웨어에서 우분투 서버 리부팅했을때 해시값이 나오는데 그때 스샷같은걸 찍어둬야함(다시는 확인 못한다고함)
+ssh설치하고 재부팅하겠냐 다음의 해시값 확인?
+
+최초 접속후 $sudo apt update를 하면 당신은 root냐고 물어보는데 서버의 비밀번호를 입력하면 업데이트가 진행된다
+
+이제 우분투는 $ logout 해도 됨
+
+윈도우 명령프롬프트에서 
+$ sudo apt update
+$ sudo apt install vim
+$ sudo apt install mysql-server
+$ sudo apt install apache2 
+$ sudo  apt  install   php   php-mysql   php-common  php-gd  php-fpm   php-xml  php-json  php-curl  git
+등을 업데이트 해준다.(전에 우분투 생성했을때, 업데이트 했던 것들 전부)
+
+192.168.5.132
