@@ -1,0 +1,26 @@
+* CentOS9에 Gnuboard 설치하기
+
+# dnf update
+# dnf install httpd
+# dnf install mariadb-server
+# dnf install php php-mysqlnd php-common php-json php-curl php-fpm php-gd php-xml git
+# cd  /var/www
+# rm -rf html
+# git clone https://github.com/gnuboard/gnuboard5
+# mv gnuboard5/ html
+# cd html
+# mkdir data
+# chmod 707 data
+# chown -R apache.apache html
+# vi /etc/selinux/config
+          (Enforcing을 Permissive로 변경)
+# reboot
+# mysql -u root -p
+          ( gnuboard생성,  board생성,  권한부여)
+# systemctl start mariadb
+# systemctl enable mariadb
+# systemctl start httpd
+# systemctl enable httpd
+# firewall-cmd --permanent --add-service=http
+# firewall-cmd --permanent --add-service=https
+# firewall-cmd --reload

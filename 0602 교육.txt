@@ -1,0 +1,230 @@
+ㅁcentos 8 삭제 후 재설치 시
+1. This.repo를 변경한 후에 dnf clean all을 한다.
+
+■Cent OS Server 설치하기
+•108p 부터 나오는 내용(책에서는 텍스트만 나오는 Sever를 Sever(B)라고 설명했다)
+1. 기존에 했던 CentOS 설치와 비슷하게 했다
+(메모리, 디스플레이, ISO파일 설정 등등)
+그 후 플레이 버추얼 머신들어가서 설치 (맨위)
+
+책에 나온 순서대로 진행 'Sever(B)'
+
+login 화면이 뜨면 root 입력 후 처음 설정한 비밀번호 (password)입력 후 
+root 권한이 뜨면 
+# cd /etc/yum.repos.d/ 입력 후 
+# rm -f *.repo
+# ls <- 리스트 확인 후 없는 것을 확인한 후
+# touch This.repo 후
+# vi This.repo로 전에 다운받은 디스레포의 내용을 오타 없이 타이핑 한다 (중간 중간 저장한다 :w )
+-2019년 이후로 wget이 설치가 따로 되지 않는다?
+※6-2내용의 한빛 다운로드 링크를 이용하여 wget이 설치가 되면 This.repo의 파일을 다운받을 수 있다
+●혹은 윈도우 프롬프트에서 ssh 접속을 해서 복붙 해도 된다 (우클릭만으로 되니까 기억)
+[]ssh 자신의아이피 -l root
+※만약 윈도우에서 ssh가 되지 않으면 리눅스에서 ip addr show 하여 리눅스에서의 아이피를 확인한 후 윈도우에서 ssh IP로 시도를 해보아야 한다
+
+# dnf clean all
+# dnf update -y 
+# dnf install wget bind-utils
+-이때 되지 않으면, This.repo의 오타가 있는 것이니 수정할 수 있도록 한다
+(오타가 있으면 어느 부분인지 알려주니까 확인 후 수정)
+wget만 설치되면 # wget http://자신의 아이피 혹은 다운로드 할 수 있는 사이트입력 후 This.repo를 다운받을 수 있다
+# wget http://download.hanbit.co.kr/centos/8/This.repo 후
+# ls -l
+
+그 후 6-1내용에 있는 명령어를 실행하여 unzip bzip2 등을 다운 받아준다 (wget 설치가 되어있어야 가능하다)
+
+121p 내용에 있는 7-6의 명령어로 ping 테스트를 한다
+
+# cd /etc/sysconfig/network-scripts/ 
+# ls 
+# vi ifcfg-기기이름
+-BOOTPROTO를 "none"으로 설정 후 그 밑에 
+
+IPADDR=192.168.5.200
+NETMAST=255.255.255.0
+GATEWAY=192.168.5.2
+DNS1=192.168.5.2
+
+이 내용들을 추가한 후 저장한다 :wq
+
+터미널에서 다음 명령을 입력하여 적용시키고 컴퓨터를 재부팅 한다
+# nmcli connetion down ens-160(장치이름)
+# nmcli connetion up ens-160(장치이름)
+# reboot
+
+124p까지 해상도 변경과 같은 설정들을 해보았다....
+
+ㅁLinux_centos8.pdf 파일의 63항목시작
+책 670p도 참고
+
+https://filezilla-project.org/ 접속 후 Download FileZilla Client for Windows (64bit x86)
+파일질라 클라이언트 버전으로 다운로드 받는다
+-중간에 오페라 설치할 것이냐는 메시지가 나오면 무시에 체크
+
+파일질라를 실행 후 맨 윗쪽에 자신의 아이피 아이디(centos) 비밀번호 입력 후 빠른 접속
+어나니머스 사용자도 접속허용했기 때문에 어나니머스로 / 비밀번호 아무거나 해서 접속해도 연결이 된다 (방화벽 stop한 상태여야 함)
+anonymous로 접속해야 pub 이라는 폴더가 있음
+-쓰기 권한이 없기 때문에 책 673p의 4-1의 내용을 수정한다
+어나니머스의 권한을 변경한 후(cd /var/ftp 이동 후, chown ftp.ftp /var/ftp/pub로 권한을 root에서 ftp로 변경하고 chmod 777 /var/ftp/pub
+하여 읽기 권한 등을 변경한다)
+그 후 반드시 systemctl restart vsftpd를 해줘야 파일질라에서도 적용이 된다
+
+ㅁ텍스트로 접속하기
+책 177p를 참고하여 접속(하려고 했으나 파일이 없어서 다음에 한다고 함.. 안할듯)
+
+윈도우 프롬프트에서 ftp 접속 후 ls 했을때 방화벽 허용
+
+ㅁFTP는 포트를 2개 사용
+-21번 포트: 명령어 포트 -> 일부 리눅스 명령어 가능
+-20번 포트: 데이터 포트 -> 데이터를 업/다운로드 할때 20번 포트를 사용
+
+•FTP 방식
+-Active Mode: 파일을 주고받기 위해, FTP Server가 Client 방식으로 접속하는 방식(Client 앞에 있는 방화벽에 막힐 가능성이 높다, 옛날방식, 권장하지 않음)
+-Passive Mode: 파일을 주고받기 위해 FTP Client가 Server로 접속하는 방식(권장, 추천)
+
+•FTP는 root권한으로 원격 접속 불가: root 권한으로 FTP 접속시 파일이 유출됨
+
+ㅁSamba 설치하기
+
+•SAMBA
+-
+
+윈도우 cmd를 관리자 권한으로 실행하고 net user root 1234 /add를 입력하여 네트워크 사용자를 추가한다
+책 697p의 명령어로 SAMBA client를 설치해준다
+그 후 yum install cifs-utils를 입력해 cifs를 설치해주고(윈도우 프롬프트)
+# mount -t cifs //192.168.5.1/share /root/share (마운트 -t cifs //윈도우의아이피/공유폴더이름 /마운트할디렉토리이름)
+password를 물어보는데 1234 (설정했던 비밀번호)를 입력한다
+•mount: 운영 체제에 외부 파일 시스템을 연결하여 해당 파일 시스템에 접근할 수 있도록 하는 과정
+•mount 명령어의 일반적인 사용 유형
+# mount -t 파일시스템유형 장치경로 마운트포인트
+•-t 파일시스템유형: 마운트할 파일 시스템의 유형을 지정합니다. 예를 들어, ext4, ntfs, cifs 등이 될 수 있습니다.
+•장치경로: 마운트할 장치 또는 파일 시스템의 경로를 지정합니다. 예를 들어, 디스크 장치의 경로(/dev/sda1)나 네트워크 공유의 주소(//서버IP/공유이름)가 될 수 있습니다.
+•마운트포인트: 마운트된 파일 시스템이 연결될 디렉토리의 경로를 지정합니다. 이 디렉토리는 미리 생성되어 있어야 합니다.
+-'mount 명령어를 사용하여 파일 시스템을 마운트하면 해당 파일 시스템의 데이터에 접근할 수 있게 됩니다.
+
+※예를 들어, SAMBA 서버의 공유 폴더를 마운트하기 위한 mount 명령어는 다음과 같을 수 있습니다.
+# mount -t cifs //서버IP/공유이름 /마운트포인트 -o username=사용자이름,password=비밀번호
+(마운트포인트까지만 입력해도 된..다?)-실습할때는 마운트포인트에 /root/share를 넣어 사용자와 디렉토리를 같이 입력했다
+
+ㅁ오후 수업
+-실습 : 서버B에 wordpress 설정하기
+1. VM웨어 워크스테이션으로 버추얼 머신 만들기, 에디트 들어가서 기존 CentOS 8 과 동일한 설정
+2. 머신을 플레이 하여 설치 준비 (첫 번째 항목으로 설치)
+3. 언어설정은 영어->네트워크 호스트 설정 들어가서 켜기->소프트웨어 셀렉션에서 미니멀 인스톨로 바꾸기->시스템 제일 윗부분 인스토레이션 desti 부분
+(짤려서 무슨 글자인지 모르겠음)선택->vm웨어 버추얼 머신 디스크가 선택된 상태에서 스토리지 컨펌 쪽 커스텀으로 변경->매뉴얼 파티션 설정 창이 뜨면
+스탠다드 파티션으로 변경-> 아래 +를 눌러 마운트 포인트 swap 선택 후 아래 4GiB로 변경(add 선택)->다시 아래 +를 눌러 마운트 포인트에 / 선택후
+아래는 공란으로 애드 마운트 포인트 클릭->done 누른후 아래 aceppt ->time 설정들어가서 아시아 서울로 설정 done->우측하단 인스톨 버튼
+->루트 비밀번호와(실습 1234) 크리에이트 유저(실습 centos/비밀번호도 centos) - 비밀번호랑 사용자 생성시 done 눌렀을때 한 번에 넘어가지 않으면
+다시 한번 누르기(아마 비밀번호가 짧거나 유저이름과 비밀번호가 동일해서 경고문같은 것이 상단에 뜨는 것 같음)
+설치가 다 끝났으면 reboot
+4. 리눅스에서 ip addr show를 하여 리눅스의 아이피를 기억한 뒤, 윈도우 프롬프트에서 ssh 아이피 -l root 접속을 하고 /etc/yum.repos.d/ 디렉토리로
+들어간 후 vi This.repo한 뒤 원래 있던 내용을 붙여넣기 한다.
+5. dnf clean all 후 dnf update -y 후 dnf install wget bind-utils 한다
+6. dnf를 사용해서 APM 설치하기
+-httpd (Apache), php, MariaDB 설치 여부 확인
+# rpm -qa httpd php mariadb-server 입력 후 아무 응답이 없으면 설치가 되어있지 않은 상태
+
+-dnf를 이용해 APM 설치
+# dnf -y install httpd php php-mysqlnd mariadb-server
+(Debian 계열에서는 httpd라고 하지 않고, apache2라고 함)
+
+윈도우 프로토콜을 이용해 리눅스 계정에 접속하여 설치를 해도 vm웨어 워크스테이션에서 확인해도 설치되었다고 나옴.
+
+-설치 확인 및 시작하기
+# systemctl status httpd : 설치 상태 확인
+# systemctl start httpd : httpd 시작
+
+* 웹서버의 루트 디렉토리 (Root Directory)
+/var/www/html : 파일을 넣으면 웹브라우저로 보여짐
+
+# cd /var/www/html
+
+vi index.html
+i : 편집모드 시작
+<html>
+<body>
+<h1> This is my website. Welcome!! <br> 어서오세요. 반갑습니다. </h1> (한영 전환 : shift+space)
+</body>
+</html>
+ESC
+:wq
+한 후 웹사이트(파이어폭스 등등)로 로컬PC의 IP로 접속하여 적용 확인
+
+-웹사이트에 이미지 넣기
+<img src=이미지이름.jpg>를 입력하고 저장하고 종료
+※이미지 url을 넣는 것 같음, c드라이브에 저장된것은 되지 않고 사이트에 있는 이미지 주소를 넣으니 적용이 됨
+
+ㅁ웹서버가 동작하지 않으면?
+1. Apache가 동작하는가?
+# systemctl status httpd를 입력하여 inactive로 나오면
+# systemctl restart httpd를 입력한다
+2. Firefox에서는 접속이 되는데 Edge에서는 접속이 안된다면?
+# firewall-config로 permanent로 하고 http와 https체크 후 Reload Firewall을 하여 적용
+
+방화벽 설정으로 http, https 권한 얻기
+방화벽 해제
+접속이 안되는 이유는 Linux 방화벽이 외부로부터의 연결을 막기 때문
+
+-터미널에서 직접 방화벽 해제 하는 방법
+# firewall-cmd  --permanent  --add-service=http
+# firewall-cmd  --permanent  --add-service=https
+# firewall-cmd  --reload -> 리로드를 해야 적용
+
+ㅁ워드프레스를 이용한 웹사이트 구축하기
+-최초 mysql 접속을 하면 비밀번호를 입력하라고 나오는데 엔터치고 넘어가면 된다
+DB유저는 외부에서 활동할 수 없다, local에서만 활동할 수 있다
+DB명령어의 끝은 항상 ;(세미콜론)을 입력해야 끝낼 수 있다 (세미콜론을 입력하지 않으면 그 다음 명령어로 이어지게 된다)
+exit로 나올 수 있다
+
+참고) DB권한을 root로 사용하면 DB가 해킹될 우려가 있음 (SQL injection 공격 우려)
+# systemctl restart mariadb 
+# systemctl enable mariadb
+# systemctl status mariadb -> 상태 확인해보기 (확인 후 q를 누르면 종료됨)
+# mysql -u root –p : maria DB 시작
+
+- MySQL과 MariaDB는 호환되도록 하고 있음 (명령어도 동일함)
+# mysql로 들어가 처음 나오는 메시지는 엔터로 무시하고
+# create database wpDB; : 웹DB생성
+# grant all privileges on wpDB.* to wpUser@localhost identified by '1234'; : 사용자와 비밀번호 생성
+q를 눌러 종료 후
+
+# cd /var/www/html
+# wget https://ko.wordpress.org/latest-ko_KR.tar.gz
+# tar zxvf latest<tab>
+
+-디렉토리 권한 변경
+# chmod 707 wordpress
+
+-파일 소유자를 apache로 변경
+# chown -R apache.apache wordpress
+# cd wordpress
+# cp wp-config-sample.php wp-config.php : sample만 제거, cp대신에 mv를 사용해도 됨
+# vi wp-config.php
+:set nu -> 라인번호 왼쪽에 보임
+ ~~_here부분을 순서대로 wpDB, wpUser, 1234로 변경
+:wq
+
+* 웹서버 설정파일을 수정
+# vi /etc/httpd/conf/httpd.conf
+:set nu
+ ( WebServer의 Root Directory 변경)
+:wq
+# dnf install php-json : CentOS8에서 Wordpress 에러 교정 방법
+# systemctl restart httpd : 아파치 재시작(변경내용을 적용하기 위함)
+
+step2) 워드프레스 설정
+http://아이피/wp-admin/ : 관리자 페이지 (글쓰기)
+http://아이피/ : 일반 사용자에게 보여지는 페이지
+
+-웹 서버 설정파일 수정
+34번 라인은 두고 122번, 134 라인에 추가(/var/www/html 부분을 /var/www/html/wordpress로 추가)
+154행은 None을 All로 변경 (대소문자구분) - 637p 중간내용이라고 함 (# vi ~httpd.conf 수정시)
+수정 후 시스템 컨트롤 명령어로 리스타트 httpd 하고, 스테이터스로 상태 확인 (초록색 액티브로 나와야 함)
+
+워드프레스 설치를 위한 사이트 접속이 되지 않을때,
+vi 편집기로 설정했을때, 대소문자가 확실했는지 확인 후 
+# mysql
+# show databases; -> 4개가 깔린 것을 확인 한 후
+# grant all privileges on wpDB.* to wpUser@localhost identified by '1234'; <- 정확하게 썼는지 확인 (대소문자+* 다음 공란 local 스펠링 맞는지 확인)
+Query OK, 0 rows affected (0.003 sec) 메시지 확인 후 다시 접속해보기 (나갈땐 exit)
+

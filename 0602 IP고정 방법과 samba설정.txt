@@ -1,0 +1,54 @@
+Samba 설정하기
+1) SElinux 보안 해제
+# vi /etc/sysconfig/selinux
+   i
+   SELINUX=enforcing을   SELINUX=disabled로 변경
+   ESC
+   :wq
+# reboot
+
+2) 고정IP 설정
+# vi  /etc/sysconfig/network-scripts/if<tab>
+내용은 아래처럼 수정
+BOOTPROTO=none
+....
+ONBOOT=yes
+IPADDR=192.168.5.200
+NETMASK=255.255.255.0
+GATEWAY=192.168.5.2
+DNS1=168.126.63.1
+저장하고 종료
+# systemctl  restart  NetworkManager
+
+3) 프로그램 설치
+# dnf  install  samba  samba-common samba-client
+
+4) 방화벽 오픈 & 리로드
+# firewall-cmd  --permanent  --add-service=samba
+# firewall-cmd  --reload
+
+5) 디렉토리 생성 및 권한 설정
+# mkdir  -p  /var/share
+# chmod -R  777  /var/share
+
+6) Samba 설정
+# cp  /etc/samba/smb.conf   /etc/samba/smb.conf.org
+# vi  /etc/samba/smb.conf
+[global]
+map to guest = bad user
+hosts allow = 192.168.5.1
+
+[SHARE]
+	path = /var/share
+	guest ok = yes
+	writable = yes
+	browsable = yes
+	read only = no
+수정끝나면 저장하고 종료합니다.
+
+# systemctl  restart  smb
+# systemctl  enable  smb
+------> 윈도우에서 윈도탐색기를 열고
+
+\\192.168.5.200을 입력하면,  share 폴더가 보입니다.
+거기에 파일을 넣으면 됩니다. 양쪽에서 다 보임
