@@ -1,0 +1,54 @@
+1)급여가 1600보다 크고 3000보다 작은 사원의 정보 출력
+SELECT ename, sal
+FROM emp
+WHERE sal > 1600 and sal < 3000;
+
+2) 사원번호가 7654와 7782 사이가 아닌 사원의 정보 출력
+SELECT *
+FROM emp
+WHERE empno not between 7654 and 7782;
+
+3) 부서번호 20, 30번을 제외한 모든 사원의 정보 출력
+SELECT *
+FROM emp
+WHERE deptno not in (30, 20);
+
+4) 이름의 마지막 글자가 T인 사원의 모든 정보를 출력
+SELECT *
+FROM emp
+WHERE ename LIKE '%t';
+
+#5) 급여가 1500 이상이고 부서번호가 30번인 사원 중 직무가 MANAGER인 사원의 정보를 출력
+SELECT *
+FROM emp
+WHERE sal > 1500 AND deptno = 30 AND job = 'manager';
+
+#6) 부서번호로 오름차순 정렬한 후 급여가 많은 사람 순으로 출력
+SELECT *
+FROM emp
+ORDER by deptno ASC, sal desc;
+
+#7) 각 부서별 같은 업무를 하는 사원의 인원수, 부서번호, 업무명 출력
+#8) 같은 업무를 하는 사원의 수가 4명 이상인 업무와 인원수를 출력
+
+#9) 'ALLEN' 의 직무와 같은 사원의 이름, 부서명, 급여, 직무를 출력
+SELECT ename, dname, sal, job
+FROM emp AS e
+JOIN dept AS d
+ON e.DEPTNO = d.DEPTNO
+WHERE job = 'salesman'; (ALLEN의 직무를 먼저 조회 후 직업을 salesman으로 재조회 했습니다)
+
+#10) 30번 부서의 최고 급여보다 많은 급여를 받는 사원의 사원번호, 이름, 급여를 출력
+SELECT *
+FROM emp AS e
+JOIN dept AS d
+ON e.DEPTNO = d.DEPTNO
+WHERE d.deptno = 30
+ORDER BY sal DESC; 조회 후 30번 부서의 최고 급여가 5700인 것을 확인하고 재조회 했습니다
+
+SELECT e.empno, e.ENAME, sal
+FROM emp AS e
+JOIN dept AS d
+ON e.DEPTNO = d.DEPTNO
+WHERE sal > 5700;
+
