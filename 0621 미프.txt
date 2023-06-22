@@ -1,0 +1,60 @@
+-회원가입 서식 만들기
+-회원가입 후 확인 버튼에 게임 사이트 입력하여 아이디 패스워드 일치하면 게임 사이트로 이동시키기
+-회원가입 시 아이디가 중복으로 나오면 중복 메시지 출력할 수 있게(마리아DB와 연동해보기)
+-마리아DB : 회원가입 시 아이디 저장/비밀번호 저장/스코어 저장 할 수 있게
+
+
+로그인 절차
+1. 아이디와 패스워드를 데이터 베이스에서 확인
+2. 확인이 된다면  아이디 또는 고유한 식별 정보를 세션이라는 곳에 저장
+
+*0621 flask로 html작성시 db연동 주의점
+
+method get방식과 post방식 들어오는 방식 주의하고, fname, lname의 값의 name이 테이블의 값과 맞는지 확인하기
+        <label for="fname">아이디:</label><br>
+        <input type="text" id="fname" name="ID"><br> fname 자체가 아이디를 뜻하는 말이고
+        <label for="lname">패스워드:</label><br>         lname 자체가 패스워드를 뜻하는 말이라고함
+        <input type="password" id="lname" name="PW">
+if conn.is_connected() 의 오류가 뜨면 py파일에서 중복된 conn.connect 구문이 있는 지 확인하고 지우기
+html 작성 시 form을 두 번 나누지 않기
+if 구문 들여쓰기 주의
+-----
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        # 회원가입 폼에서 데이터 가져오기
+        ID = request.form['ID']
+        PW = request.form['PW']
+
+        # MariaDB 연결 설정
+        conn = pymysql.connect(
+            host="127.0.0.1",
+            user="root",
+            password="mariadb",
+            database="nono",
+            charset="utf8"
+        )
+
+        # 데이터베이스에 회원 정보 삽입
+        cursor = conn.cursor()
+        query = "INSERT INTO nono_1 (ID, PW) VALUES (%s, %s)"
+        cursor.execute(query, (ID, PW))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return '회원가입이 완료되었습니다.'
+
+    return render_template('signup.html')
+
+-게임이 끝나고 난 후 자신의 아이디와 점수(1클릭당 -1점씩 깎이는 시스템), 시간, 순위 (내림차순으로 순위표 만들기)
+
++conn. pymysql 연결 명령어는 연결 할 함수마다 넣어주기(함수 아래에다가)
+ex) def sdsd():
+	sdsdsd.sds
+conn.py~
+conn.close()
+마지막에 conn.close() 넣는 것 잊지말기
+
+html의 테이블의 스타일은 여러가지를 넣을 수 있는데 세미콜론다음에 바로 넣어주기 띄어쓰기 없기 ""없이 "은 마지막과 첫부분만
+테이블의 첫번째 줄은 tablehead 줄여서 thead 이고 명령어 보다보면 (1)이 있는데 그건 헤드의 첫번째라는 뜻
+헤드 밑부분은 바디 tbody 마찬가지로 바디부분의 첫번째만 변경하고 싶다고 하면 tbody style="~~ (1) 두번째도 달고 싶으면 (2)해서 더 달아보기
