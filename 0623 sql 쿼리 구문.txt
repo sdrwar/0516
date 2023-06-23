@@ -1,0 +1,84 @@
+SET @rownum := 0;
+
+SELECT t.*
+  FROM (SELECT (@rownum := @rownum + 1) AS NUMBER
+             , nono_1.*
+          FROM nono_1) AS t
+ LIMIT 0, 5;
+-
+SELECT t.RANK
+  FROM (
+			SELECT ROW_NUMBER() OVER (ORDER BY score DESC) AS RANK
+			     , id
+			     , score
+			  FROM score
+  ) AS t
+ WHERE id = 'h';
+-
+SELECT s.ID, s.score, t.score 
+        FROM score as s 
+        left JOIN timegame as t 
+        ON s.ID = t.ID
+ WHERE s.id = 'a';
+ 
+
+SELECT tt.*
+  FROM (SELECT s.ID, s.score, s.date, 'score' AS 'kind'
+          FROM score AS s
+         UNION 
+        SELECT t.id, t.score, t.date, 'timegame' AS 'kind'
+          FROM timegame AS t) AS tt
+ WHERE tt.id = 'a';
+-
+SELECT tt.*
+FROM (SELECT s.ID, s.score, s.date, 'score' AS 'kind'
+FROM score AS s
+UNION 
+SELECT t.id, t.score, t.date, 'timegame' AS 'kind'
+FROM timegame AS t) AS tt
+WHERE tt.id = 'a';
+
+SELECT tt.ID, tt.score, tt.kind, RANK() OVER 
+(ORDER BY tt.score DESC) AS ranking
+FROM (
+SELECT s.ID, s.score, 'score' AS 'kind'
+FROM score AS s
+UNION 
+SELECT t.id, t.score, 'timegame' AS 'kind'
+FROM timegame AS t
+) AS tt
+WHERE tt.id = 'g';
+-
+ALTER TABLE timegame ADD COLUMN `rank` INT;
+UPDATE timegame SET `rank` = (
+    SELECT COUNT(*) FROM (
+        SELECT * FROM timegame ORDER BY score DESC
+    ) AS t WHERE t.score >= timegame.score
+);
+-
+SELECT tt.ID, tt.score, tt.kind, tt.ranking
+ FROM (
+   SELECT s.ID, s.score, 'score' AS 'kind'
+        , RANK() OVER (ORDER BY s.score DESC) AS ranking
+     FROM score AS s
+    UNION 
+   SELECT t.id, t.score, 'timegame' AS 'kind'
+	     , RANK() OVER (ORDER BY t.score DESC) AS ranking
+     FROM timegame AS t
+ ) AS tt
+WHERE tt.id = 'a';
+
+SELECT ttt.*
+  FROM (
+	SELECT tt.ID, tt.score, tt.kind
+	     , RANK() OVER (ORDER BY tt.score DESC) AS ranking
+	 FROM (
+	   SELECT s.ID, s.score, 'score' AS 'kind'
+	     FROM score AS s
+	    UNION 
+	   SELECT t.id, t.score, 'timegame' AS 'kind'
+	     FROM timegame AS t
+	 ) AS tt
+  ) AS ttt
+ WHERE ttt.id = 'a';
+-

@@ -1,0 +1,26 @@
+select 구문을 사용하여 단순하게 join으로 묶어 마리아db에서 아이디를 조회하여 두 개의 다른 score를 검색하려고 했는데(테이블이 다름),
+join 구문을 사용하면 하나의 값이 없으면 결과가 조회가 되지 않고 outer 구문을 사용하여 검색을 하더라도 어떤 table의 어떤 score인지 구별이
+되지 않아 강사님이 알려준 구문은 Union을 사용하여 서브쿼리와 묶어 사용하는 것이었다 (kind 유형별로 묶어 사용하니 팝업창에도 잘 떴었다)            
+SELECT tt.*
+FROM
+ (SELECT s.ID, s.score, s.date, 'score' AS 'kind'
+  FROM score AS s
+  UNION 
+  SELECT t.id, t.score, t.date, 'timegame' AS 'kind'
+  FROM timegame AS t) AS tt
+WHERE tt.id = %s
+
+함수 구문 시작시 conn = pymysql.connect로 sql을 열고 sql쿼리 넣고 닫는 것 잊지 말기.
+(함수 구문 시작 전에 conn = pymysql.connect으로 sql을 열고 커서를 열기하니 오류가 떴었다)
+
+route 설정 시 메소드를 post 방식으로 할 것인지 get 방식으로 할 것인지 아니면 둘 다 할 것 인지 명확히 적어둘 것 
+적지 않아 오류가 뜨는 경우가 종종 있었음.
+
+웹페이지에서 메소드 형식이 맞지 않는다는 오류가 뜨면 방식을 바꿔보거나 
+if구문을 추가하여 post방식일 때는 작성한 구문으로 동작하게 하고 아니면 리턴 값으로 돌려 만들어 둔 html로 get방식으로 넘기게 하기.
+
+if request.method == 'POST': ... 
+return render_template('search.html')
+
+html과 py파일에서 이름 혼동해서 적지 않도록 하기, 해당 변수가 없거나 하면 html에 그 값을 명시해두기
+search.html 파일에서 id와 다른 값이 없어서 동작하지 않았다(id 값은 form 항목 안에 키를 추가하여 해결했었다)
