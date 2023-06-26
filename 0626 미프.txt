@@ -1,0 +1,26 @@
+■웹페이지에서 None으로 뜨는 항목 원하는 텍스트로 변경하는 방법
+1. html에서 {{ row 0 }} 값을 if 구문을 이용해 변경한다
+ex
+   {% if row[0] == ' ' %}
+                            ABC
+                          {% else %}
+                            {{ row[0] }}
+                          {% endif %}
+row 0이 ' ' (공백)이라면 ABC라는 텍스트로 변경 하고 else (아니라면) row 0의 값을 표현해준다 (py파일에서 변경한 쿼리 값 같은)
+html에서 if구문을 쓰면 endif로 마무리를 지어줘야 한다
+
+2. app.py 파일에서 셀렉트 쿼리 구문을 ifnull 구문을 추가하여, ifnull이라면 텍스트로 대체한다 
+ex
+    else:
+        cursor = conn.cursor()
+        select_query = "SELECT ifnull(game, '가나다'), id, score, rank FROM scores ORDER BY score DESC"
+        cursor.execute(select_query)
+        data = cursor.fetchall()
+ifnull 이라면 game의 열의 텍스트를 '가나다'로 표현해준다.(if가 아닌 else인 이유는 점수표의 select 구문에서 추가했기 때문이다)
+(점수표의 홈화면)
+
+■셀렉트 쿼리에서 오류가 났었던 부분
+select_query = "SELECT ifnull(game, 'Game'), id, score, rank FROM scores ORDER BY score DESC, limit 0, 10"
+-sql에서 처럼 ,을 쓰지 말고
+select_query = "SELECT ifnull(game, 'Game'), id, score, rank FROM scores ORDER BY score DESC limit 0, 10"
+처럼 바로 넣어야 오류가 뜨지 않는다
