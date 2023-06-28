@@ -9,8 +9,13 @@ sylim@nobreak.co.kr
 #클라우드의 기초
 ■SaaS ,PaaS, IaaS 등의 클라우드 서비스 모델에 따라 내가 관리해야 하는 것과 서비스 모델에서 제공하는 관리 영역이 다르다
 •SaaS(Software as a Service) : 서비스로서의 소프트웨어
+(하드웨어, OS, 미들웨어, 애플리케이션: 클라우드 사업자가 운용, 관리)
+
 •PaaS(Platform as a Service) : 서비스로서의 플랫폼
-•IaaS(Infrastructure as a Service) : 서비스로서의 인프라 스트럭처
+(하드웨어, OS, 미들웨어: 클라우드 사업자가 운용, 관리)
+
+•IaaS(Infrastructure as a Service) : 서비스로서의 인프라스트럭처
+(하드웨어: 클라우드 사업자가 운용, 관리)
 
 온프레미스 프라이빗 클라우드
 클라우드 서비스를 이용하기 위해 온프레미스 환경을 구축
