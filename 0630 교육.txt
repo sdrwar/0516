@@ -1,0 +1,118 @@
+ssh ec2-user@13.125.230.65 -i C:\Users\User\Downloads\ec2-ssh-key.pem -> myssh
+ssh ec2-user@15.168.16.11 -i C:\Users\User\Downloads\key\ec2-ssh-key.pem 교육용
+
+■0630 AWS 교육
+[Chapter 1]
+•AWS 시작하기
+
+■AWS 계정 만들기
+계정 - 보안 자격 증명 - 좌측 메뉴에서 엑세스 관리(사용자 그룹, 사용자, 역할)등을 확인 했다
+루트 사용자는 엑세스 키를 없는 상태로 두어야 한다
+
+•개별 IAM 사용자 생성
+좌측 사용자 메뉴에서 우측 사용자 생성 (test번호끝자리4개로 만들었다)
+AWS Management Console에 대한 사용자 액세스 권한 제공 체크
+IAM 사용자를 생성하고 싶음 체크, 자동 생성된 암호 체크
+권한 옵션에서 직접 정책 연결 체크(검색 박스에서 ec2 검색 후 AmazonEC2FullAccess 체크 후 다음)
++박스를 눌러 자세한 코드나 정보를 볼 수 있다
+아래 태그에 추가하기 후 키 name test로 넣었다
+콘솔 로그인URL 주소를 복사 후 시크릿 브라우저를 열어 해당 주소로 접속하고, 만든 IAM 계정 이름 등을 입력하여(암호는 복사하거나 표시눌러서 보면된다)
+VPC를 생성하고, 기존의 서브넷 말고 새로운 서브넷을 만들어 준다
+기존의 172.31의 2옥텟까지는 같게 하고 세번째 옥텟을 다르게 만들어 주어야 한다
+(근데 만들어 지지 않아 다시 EC2로 가서 인스턴스를 다시 만들어야했다, 지우고 다시 만들거나 인스턴스 갯수 정하는 항목에서 1개 이상 설정하거나)
+방화벽(보안 그룹) 에서
+SSH 트래픽 허용, 인터넷에서 HTTPS 트래픽 허용, 인터넷에서 HTTP 트래픽 허용 체크 후 전과 동일 한 설정으로 생성
+(인스턴스 생성하기가 안되면 리전바꿔보고 생성 누른 후에 다시 리전을 원래 리전으로 바꿔서 하면 인스턴스 생성이 됐었다)
+그 후 인스턴스에서 퍼블릭IP를 확인 후 cmd에서 ssh 실행(유저 이름을 ec2로 한 이유는 ec2에서 생성했기 때문이고, aws에서는 user라는 개념을
+인식하지 못한다고 함) cmd에서 퍼미션 디나이드. 뜨면 키.pem 파일의 속성-보안 들어가서 편집 / 시스템과 어드민스테이터스에는 읽기 권한만 준다
+여기도 안되면 아래 고급 들어가서 아래 '상속 사용 안함' 체크 후 다 지우고 보안 주체 클릭 후 아래 고급 들어가서 User (Users는 그룹)를 선택 후
+확인 읽기 및 실행(읽기,쓰기)만 체크 후 확인
+※엑세스 권한이 User에게만 있어야 하는데 시스템과 어드민스테이터스에도 있기 때문에 퍼미션 디나이드가 뜨는 것이라고 함
+접속 했을 때, ssh의 ip와 인스턴스의 프라이빗 ip가 동일한지 확인
+
+ㅁ전반적으로 Linux 명령어 테스트와 실습을 한듯(오전 시간)
+
+ssh 접속 후에 리눅스 환경에서 ls -l /etc/yum으로 들어가 리스트 확인 or /etc 까지만 가서 yum.repos.d 파일 있는 지 확인
+ls -l /etc/yum.re 까지 치고 탭으로 파일 찾아 엔터
+cat amz2-core.repo로 내용 확인 했는데 너무 빨라 뭔말인지 모르겠음
+yum info httpd로 httpd 설치 가능 여부 확인
+sudo yum install httpd로 설치, 설치 후 id 입력하여 아이디 정보들 확인(하는데 뭔말인지 못알아들음, gpt로 검색하여 보충)
+rpm -qa httpd 입력하여, 설치 한 httpd의 정보들 확인
+rpm -qc httpd(-qc의 c는 config)를 입력하여 conf 파일들 확인
+rpm -qd httpd(d는 문서파일, doc)
+rpm -ql httpd 입력하여 모든 파일을 볼 수 있다
+rpm -ql httpd | more 명령어로 천천히 목록을 볼 수 있다
+
+httpd를 동작시키기 - systemctl status httpd로 꺼진 거 확인 후 sudo systemctl restart httpd
+안되면 sudo systemctl stop httpd 하고 yum start apache 하고 enabled 시킨듯.. (httpd가 apache)
+
+httpd의 Main PID와 그룹별 관리와 로그설명과 id 명령어로 시스템 저널 등을 설명했...지만 모르겠다
+vi 편집기를 이용한 index.html 생성 등과 리스트 확인을 했다
+ls -l /var/www/html <-html의 기본 경로
+sudo vi /var/www/html/index.html
+웹페이지로 접속하기 위해선 http://ec2-15-168-13-76.ap-northeast-3.compute.amazonaws.com/
+ec2-퍼블릭주소(.를 -로 변경).리전 주소.amazonaws.com
+
+VPC에서 인터넷 게이트웨이 등의 정보를 확인 했다
+
+AWS에서는 보통 ip블록을/16을 주고 서브네팅을 하면 보통 /20을 많이 넣는다.
+VPC 설정 시 VPC 등에서의 서브넷, 라우팅 테이블 등의 설정을 보고 생성했었다.
+가용영역AZ 사용자 지정으로 가용 영역 따로 지정해봤다
+퍼블릭 서브넷(공인망)1개 프라이빗 1개 설정
+서브넷 CIDR 블록은 자동으로 /20으로 설정 되었다(AWS의 디폴트 규칙)
+NAT 게이트웨이(유료): 공인 아이피를 가져와서 인터넷 밖으로 나갈 수 있게 해주는 게이트웨이
+(가용영역 1개 밖에 안쓸거라서 1개의 AZ에서 선택)
+퍼블릭은 인터넷게이트웨이, 프라이빗은 NAT게이트웨이로 나가는 걸 확인할 수 있다.(표에 마우스 커서를 올려 확인 가능)
+VPC엔드포인트는 없음으로 체크
+VPC 생성 후 생성 화면 캡쳐를 해야 한다(삭제할 때 표에 있는 순서를 확인해야 한다)
+
+IGW와 NATgw의 차이점
+IGW는 인터넷으로 나가는 것, 인터넷에서 퍼블릭으로 들어오는 것 둘 다 가능
+NAT게이트 웨이는 인터넷으로 나가는 것(프라이빗에서 ip주소를 바꿔서)은 되지만 프라이빗 서브넷 안으로 들어오는 것은 안된다
+
+AWS에서는 VPC에서 프로필을 지워도 NAT게이트웨이는 사라지지 않는다(돈이 나간다), 탄력적 IP주소 변경? 그 기능으로 반납해야 한다
+
+vpc와 인스턴스 새로 만든 후(Amazon Linux 2023 AMI)
+새로 만든 인스턴스의 퍼블릭IP로 SSH하여 접속
+uname -a 로 커널 확인
+ls -l /etc/yum.repos.d/ 확인 후 sudo yum install httpd -y로 httpd 설치
+vi로 index 만들고 sudo vi /var/www/html/index.html
+인덱스 편집 후 저장하고 나가기
+curl localhost로 로컬의 응답을 확인 후 sudo systemctl start httpd, 혹은 sudo systemctl enable httpd 후 스타트
+
+웹서버에서 디비서버로 ssh 접속 후 yum searh mariadb 후 설치하고
+rpm -qa mariadb105-server로 설치 확인?
+
+마리아 디비 설치 후 rpm -ql mariadb105-server 입력 후 비밀번호를 설정하기 위한 스크립트를 만들어야 한다.
+/usr/bin/mysql_secure_installation 에서 기초 설정을 할 수 있다.
+ls -l /usr/bin/mysql(혹은 mariadb)_secure_installation 확인(링크 파일인 것을 확인 했으면 ls -l /usr~mariadb_secure_~ 입력 후 확인)
+file /usr/~/mariadb_secure_~로 파일이 텍스트 파일인 것을 확인 후 echo $PATH로 뭐.. 확인..
+sudo mariadb-secure-installation 입력 후 엔터
+소켓 계정을 쓸 것이냐는 질문에는 n / 루트 패스워드를 바꿀거냐는 질문에 y 입력 후, 비밀번호 편한걸로 입력 / 어나니머스 유저 리무브:y
+root login remotely? y / 테스트 디비 y 등 나머지는 y눌러 패스..
+mysql -u root -p 입력 후 패스워드 입력
+show databases;로 데이터베이스 목록 확인 후 use mysql; 입력하여 데이터베이스 생성
+select User,Host from User; 입력하여 호스트에 로컬호스트 접속을 허용?하게 해준다
+구글에 mysql user create 입력하여 mysql에 유저 생성 예시를 보고 생성
+create user 'admin'@'10.0.%'
+idenrified by '비밀번호(qwer1234)';
+그 후 flush privileges; 입력하여 반영해준다.
+
+select User, Host from user;로 호스트에 주소가 잘 들어갔는지 확인
+
+웹서버로 돌아가서 sudo yum install -y mariadb105로 설치 (마리아디비 클라이언트)
+mysql -u admin -p -h(호스트) ip주소(디비서버의 프라이빗 IP DNS 이름(IPv4만 해당) 부분을 전체 복사 붙여넣기)
+mysql -u admin -p -h ip-172-31-40-84.ap-northeast-3.compute.internal(또는 사설IP 주소) <- 예시
+
+※디비 서버에 마리아디비 깔고, 웹서버에서 디비 서버로 접속 되는지 디비 서버에서 웹서버로 접속 되는지 확인하는 과정이었다.
+
+AWS로 돌아와서 인스턴스부터 삭제하고(인스턴스 상태 -> 인스턴스 종료) '종료됨' 상태가 되면 목록에서 사라지는데 시간이 조금걸린다.
+VPC에서 NAT게이트웨이 -> 작업 -> NAT게이트웨이 삭제 (삭제 입력 후) Deleting상태에서 Deleted 될 때까지 기다려야 한다4
+인터넷게이트웨이로 돌아와서(이름없는 기본 인터넷게이트웨이는 삭제하면 안된다 VPC랑 연결되어 있기 때문에 삭제하면 안됨)
+- 로되어있는 기본 게이트웨이 말고 만든 인터넷게이트웨이 선택 후 작업 -> VPC에서 분리 (Detached 상태가되면 됨)
+탄력적 IP로 들어가서 IP주소 체크하고 작업 -> 탄력적IP 주소 릴리스
+서브넷으로 들어가서 퍼블릭, 프라이빗 주소 선택 후 작업->서브넷삭제
+라우팅테이블로 들어가서 기본 (-)은 내버려두고 만든 것만 작업->삭제
+VPC로 들어가서 만든 VPC 작업->삭제 (기본은 내버려두기)
+
+
