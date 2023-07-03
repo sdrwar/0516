@@ -87,9 +87,9 @@ rpm -qa mariadb105-server로 설치 확인?
 /usr/bin/mysql_secure_installation 에서 기초 설정을 할 수 있다.
 ls -l /usr/bin/mysql(혹은 mariadb)_secure_installation 확인(링크 파일인 것을 확인 했으면 ls -l /usr~mariadb_secure_~ 입력 후 확인)
 file /usr/~/mariadb_secure_~로 파일이 텍스트 파일인 것을 확인 후 echo $PATH로 뭐.. 확인..
-sudo mariadb-secure-installation 입력 후 엔터
+sudo sudo mysql_secure_installation 입력 후 엔터
 소켓 계정을 쓸 것이냐는 질문에는 n / 루트 패스워드를 바꿀거냐는 질문에 y 입력 후, 비밀번호 편한걸로 입력 / 어나니머스 유저 리무브:y
-root login remotely? y / 테스트 디비 y 등 나머지는 y눌러 패스..
+root login remotely? y / 테스트 디비 y 등 나머지는 y눌러 패스..(0703 메모에 디테일하게 있다)
 mysql -u root -p 입력 후 패스워드 입력
 show databases;로 데이터베이스 목록 확인 후 use mysql; 입력하여 데이터베이스 생성
 select User,Host from User; 입력하여 호스트에 로컬호스트 접속을 허용?하게 해준다
@@ -114,5 +114,3 @@ VPC에서 NAT게이트웨이 -> 작업 -> NAT게이트웨이 삭제 (삭제 입�
 서브넷으로 들어가서 퍼블릭, 프라이빗 주소 선택 후 작업->서브넷삭제
 라우팅테이블로 들어가서 기본 (-)은 내버려두고 만든 것만 작업->삭제
 VPC로 들어가서 만든 VPC 작업->삭제 (기본은 내버려두기)
-
-
