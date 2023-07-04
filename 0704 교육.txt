@@ -1,0 +1,257 @@
+■점프서버와 웹서버의 차이점
+공통점: 두 서버 모두 EC2인스턴스로 생성한다.
+차이점: 관리를 클라우드 사업자냐 사용자냐의 설명도 있었는데 중요한거 아닌듯 빠르게 넘어감
+
+VPC로 가용영역 2개 짜리 VPC를 만들고 네트워크 설정 등을 확인..
+VPC, 서브넷, 라우팅 테이블, 인터넷 게이트웨이, 탄력적 IP 확인(탄력적 IP에 할당된 IPv4의 주소도 확인)
+
+•탄력적 IP에서 할당된 IPv4 주소: AWS에서 제공하는 고정된 IPv4 주소로서, 인터넷에서 접근이 가능한 공인 IP 주소,
+일반적인 동적인 IP와는 달리, 탄력적 IP는 인스턴스에 할당하거나 다른 인스턴스로 변경할 때 주소가 바뀌지 않아, 네트워크 연결 끊김 문제를 줄여줍니다.
+
+ㅁ장점:
+1. 고정된 공인 IP 주소를 사용하여 인스턴스에 접속이 가능합니다.
+2. 인스턴스가 중단되거나, 교체되어도 IP 주소가 변경되지 않아 고정 IP의 특성을 유지합니다.
+3. 인스턴스 간에 할당된 탄력적 IP 주소를 쉽게 전환할 수 있어, 관리가 편리합니다.
+ㅁ단점:
+1. 추가적인 비용이 발생할 수 있습니다. 탄력적 IP 주소가 인스턴스에 연결되지 않은 상태로 남아있는 경우, AWS는 추가요금을 부과하게 됩니다.
+2. 탄력적 IP 주소는 IPv4에서만 사용가능하며, IPv6에서는 지원되지 않습니다.
+
+서버 1(웹,디비)에는 우분투OS, 서버 2(웹,디비)에는 리눅스OS를 설치하고, wordpress를 설치하는 과정을 실습
+먼저 보안그룹을 생성 보안>보안그룹>보안그룹생성
+
+웹서버용은 보안그룹 이름이랑 설명(ssh, http) vpc는 생성한 vpc 선택 후 인바운드 규칙에 ssh, http 추가 후 소스에 각각 0.0.0.0/0 을 추가
+DB서버용도 보안그룹로 생성, VPC 생성할 때 약속된 CIDR 주소로(각 교육생마다 주소가 다르다) ssh,mysql 인바운드 추가 후 ssh에 10.x.0.0/16 입력	
+
+웹서버 인스턴스 생성
+이름과 키 값은 기존처럼 설정 하고 방화벽(보안그룹)은 방금 생성한 보안그룹을 쓸 것이기 때문에 기존 보안그룹 선택 후 
+일반 보안 그룹에서 만들었던 보안그룹을 선택한다
+
+고급 세부 정보를 펼쳐 사용자 데이터에 #! /bin/bash 명령어를 추가하여 생성되면 명령어가 실행될 수 있게 만들어 두자
+#! /bin/bash
+sudo apt update
+sudo apt install apache2 -y
+echo $HOSTNAME > /var/www/html/index.html
+systemctl restart apache2
+우분투 웹서버의 사용자 데이터 명령어
+
+#! /bin/bash
+sudo apt update
+sudo apt install mariadb-server mariadb-client -y
+우분투 DB서버의 사용자 데이터 명령어(sudo를 붙이지 않으니 업데이트가 안되거나 마리아디비의 설치가 되지 않는 경우가 있어 sudo를 붙이자)
+
+서버 1의 DB 서버도 만들자
+DB만들 때도 네트워크 설정에 편집을 눌러 상세하게 보자(vpc를 생성한 vpc로 선택하지 않으니 새로 만든 보안그룹이 보이질 않았다)
+※서브넷은 반드시 private로 설정하자(웹서버는 public, db서버는 private)
+
+cmd로 ssh 접속을 해보자
+ssh -i "C:\Users\User\Downloads\key\ec2-ssh-key.pem" ubuntu@ec2-15-152-30-208.ap-northeast-3.compute.amazonaws.com
+
+ubuntu에서 패키지 설치 확인(버전)
+$ apt show mariadb-server
+$ dpkg -l maraidb-server (강의 노트에 오타가 있다, dpkg가 맞다 dpkg가 아니라)
+
+apt 도구를 업데이트 하고$sudo apt uptade 웹서버에 mariadb 클라이언트를 설치하고 $sudo apt instrall mariadb-client 중간에 Y 입력해준다
+혹시 모르니(웹서버라 서버는 설치하지 않아도 되지만 mariadb-server도 설치 했다)
+데이터베이스 보안 기본 설정해주는 스크립트  (mysql_secure_installation)
+$ sudo mysql_secure_installation
+
+Enter current password for root (enter for none) 엔터
+Set root password? [Y/n] y (qwer1234!로 통일)
+Remove anonymous users? [Y/n] y
+Disallow root login remotely? [Y/n] n
+Remove test database and access to it? [Y/n] y
+eload privilege tables now? [Y/n] y
+
+mysql 설정
+$ mysql -u root -p
+암호입력
+
+※mysql -u root -p 입력 시, ERROR 1698 (28000): Access denied for user 'root'@'localhost' 에러가 뜨면 sudo mysql -uroot 명령어로 접속한다(구글링)
+그 후 비밀번호를 먼저 바꿔주고 실습을 들어가던지, 실습을 마치고 sql 끝내기 전에 비밀번호 변경을 해준다
+$ sudo mysql -uroot
+$ use mysql;
+$ update user set plugin='mysql_native_password' where user='root';
+이 방법으로도 mysql -u root -p 접속이 되지 않으면
+
+아래와 같이 명령어로 해결 sudo 명령어로 mysql 를 접속한 후에 아래와 같이 비밀번호을 할당해준다.
+
+$ sudo mysql -uroot
+$ use mysql;
+MariaDB [mysql]> set password for root@'localhost' = PASSWORD('1111');
+Query OK, 0 rows affected (0.008 sec)
+
+[OR]
+
+MariaDB [mysql]> ALTER USER root@localhost IDENTIFIED BY '1111';
+Query OK, 0 rows affected (0.009 sec)
+
+
+다시 mysql 접속을 시도해보면 “$ mysql -uroot” 비밀번호를 물어보며 “mysql -uroot -p” 로 정상적으로 로그인을 하는걸 볼 수 있다.
+
+나는 밑의 방법으로 해결 했다 (마리아디비 10.5 이상의 버전에서 해결 방법이라고 함. 
+https://linked2ev.github.io/database/2021/06/12/MariaDB-ERROR-1698-(28000)-Access-denied-for-user-'root'@'localhost'/)
+
+그 후, 
+> use mysql;
+> select User,Host from user;
+>  CREATE USER  'admin'@'10.x.%' IDENTIFIED BY 'qwer1234';
+> exit
+
+동작확인
+$ systemctl status mariadb
+$ ps -ef | grep mariadb
+$ ss -antp | grep :3306
+
+bind-address 변경 (모두 허용할 수 있게? 아무튼 그런 것 같음)
+ubuntu@ip-10-0-133-227:~$ ss -antp | grep :3306
+LISTEN 0      80         127.0.0.1:3306      0.0.0.0:*
+			localhost 자신의 요청에 대해서만 응답을 함.
+			0.0.0.0:3306
+
+ubuntu@ip-10-0-133-227:~$ cat /etc/mysql/mariadb.conf.d/50-server.cnf
+bind-address            = 127.0.0.1 이부분을 변경해야함
+
+ubuntu@ip-10-0-133-227:~$ sudo vi /etc/mysql/mariadb.conf.d/50-server.cnf
+ubuntu@ip-10-0-133-227:~$ grep bind-address /etc/mysql/mariadb.conf.d/50-server.cnf
+bind-address            = 0.0.0.0 (바뀐 것을 확인)
+
+ubuntu@ip-10-0-133-227:~$ ss -antp | grep :3306
+LISTEN 0      80         127.0.0.1:3306      0.0.0.0:*
+
+그 후 $sudo systemctl restart mariadb
+
+■웹서버에서 DB서버로 접속
+먼저 웹서버에서 exit로 로그아웃을 하고 DB서버로 접속을 시도한다
+웹서버에서 key폴더를 만든 후 값을 vi편집기로 복붙하고 DB서버로 ssh접속을 시도한다 "ssh ubuntu@db아이피 -i ~/key 키값경로 입력"
+
+ssh -i "C:\Users\User\Downloads\key\ec2-ssh-key.pem" ubuntu@ec2-13-208-252-203.ap-northeast-3.compute.amazonaws.com
+웹서버 ssh 접속 후
+mkdir key로 디렉토리 생성 후 cd key로 디렉토리 안으로 들어가 vi ec2-ssh-key.pem <이름 똑같이 그리고 chmod로 권한 400으로 설정(꼭)
+
+중간에 yes입력 후 아이피가 주소랑 프롬프트 창에 있는 주소랑 맞는지 확인 후 디비 클라이언트 서버를 status로 확인하고, 설치가 되어 있지 않으면
+sudo apt로 설치하기
+
+강의 노트 보니 중간에 mysql로 db서버 접속하는 것 같음.. 근데..아니다..
+
+ㅁ가용영역2에 아마존리눅스로 웹서버 만들기
+t2.micro에서 만들어지지 않으면 t3로
+
+웹서버2에도 키 값을 넣기 vi 편집기로
+
+ ssh -i "C:\Users\User\Downloads\key\ec2-ssh-key.pem" ec2-user@ec2-15-152-229-115.ap-northeast-3.compute.amazonaws.com
+명령어로 ssh 접속을 한 뒤
+mysql 보안 설정 (sudo mysql_secure_installation)
+•$sudo mysql_secure_installation 으로 mysql(mariadb 보안 설정 설치)
+•Enter current password for root (enter for none): 엔터
+•Switch to unix_socket authentication [Y/n] n
+•Change the root password? [Y/n] y (qwer1234! : 공동으로 바꾼 비밀번호)
+•다시 입력
+•Remove anonymous users? [Y/n] y
+•Disallow root login remotely? [Y/n] n
+•Remove test database and access to it? [Y/n] y
+•Reload privilege tables now? [Y/n] y 등으로 설정 한다
+
+mysql -u root -p 입력 후 패스워드 입력
+show databases;로 데이터베이스 목록 확인 후 use mysql; 입력하여 데이터베이스 생성
+select User,Host from User; 입력하여 호스트에 로컬호스트 접속을 허용?하게 해준다
+구글에 mysql user create 입력하여 mysql에 유저 생성 예시를 보고 생성
+create user 'admin'@'10.15.%' identified by 'qwer1234';
+그 후 flush privileges; 입력하여 반영해준다.
+크레이트 유저 admin을 중복 생성 하였다면 Drop user 명령어로 삭제해주자
+(DROP USER 'admin'@'10.0.%';)
+
+select User, Host from user;로 호스트에 주소가 잘 들어갔는지 확인
+
+웹서버로 돌아가서 sudo yum install -y mariadb105로 설치 (마리아디비 클라이언트)
+mysql -u admin -p -h(호스트) ip주소(디비서버의 프라이빗 IP DNS 이름(IPv4만 해당) 부분을 전체 복사 붙여넣기)
+mysql -u admin -p -h ip-172-31-40-84.ap-northeast-3.compute.internal(또는 사설IP 주소) <- 예시
+
+[db서버에서 진행]
+$ dnf install mariadb105-server mariadb105 -y
+$ sudo systemctl start mariadb 
+$ mysql_secure_installation
+$ mysql -u root -p
+> CREATE USER 'DB사용자명'@'10.x.%' IDENTIFIED BY `사용자암호`;
+> CREATE DATABASE 'wordpress가 사용할 db';
+> GRANT ALL PRIVILEGES ON `wordpress가 사용할 db`.* TO 'DB사용자명'@'10.x.%';
+> FLUSH PRIVILEGES;
+> exit
+
+DB생성 시 mysql에서는 작은 따옴표 ''가 먹히지 않으니 역따옴표 ``를 사용해야 한다.
+DB유저 생성 시에는 또 작은 따옴표를 쓰라고 한다...
+
+ssh -i "C:\Users\User\Downloads\key\ec2-ssh-key.pem" ec2-user@ec2-15-152-229-115.ap-northeast-3.compute.amazonaws.com
+
+web서버로 접속하려면 db에서 exit를 하거나 터미널에서 다시 웹서버로 ssh 연결을 해야할 것 같다
+
+[웹서버에서 진행]
+$ dnf search php
+$ sudo dnf install wget php-mysqlnd httpd php-fpm php-mysqli php-json php php-devel -y
+$ sudo systemctl start httpd
+$ sudo systemctl enable httpd
+또는 이미 이전에 설치해서 동작한 경우에는 sudo systemctl restart httpd
+
+[웹서버에서 진행]
+$ cd ~
+$ wget https://wordpress.org/latest.tar.gz
+$ tar -xzf latest.tar.gz
+$ cp wordpress/wp-config-sample.php wordpress/wp-config.php
+$ vi nano wordpress/wp-config.php (단어지우기 단축키 dw)
+
+define('DB_NAME', 'wpdb');
+define('DB_USER', 'DBadmin');
+define('DB_PASSWORD', 'qwer1234!');
+define('DB_HOST', '10.15.153.6');
+
+하고 워드프레스 파일을 전부 /var/www/html로 복사하거나 이동을 하고 ls해서 권한을 root가 아닌 wordpress로 바꿔줘야 한다
+sudo mv wordpress /var/www/html/
+
+$ sudo mv ~/wordpress/*  /var/www/html/ (wordpress내용들을 var/www/html 밑으로 이동)
+디렉토리 채로 옮겼으면, $ cd wordpress로 들어가 $ sudo mv * /var/www/html
+$ sudo chown apache:apache /var/www/html -R  
+$ sudo systemctl restart httpd
+웹브라우저로 접근(웹서버의 퍼블릭 아이피로 접속시도)
+
+[웹서버에서 진행]
+$ cd ~
+$ wget https://wordpress.org/latest.tar.gz   게시판소스다운로드
+$ tar -xzf latest.tar.gz
+$ cp wordpress/wp-config-sample.php wordpress/wp-config.php
+$ vi wordpress/wp-config.php
+뭔가 순서가 뒤엉킨 것 같다
+
+변경후
+ 22 /** The name of the database for WordPress */
+ 23 define( 'DB_NAME', 'wordpress' );
+ 24
+ 25 /** Database username */
+ 26 define( 'DB_USER', 'admin' );
+ 27
+ 28 /** Database password */
+ 29 define( 'DB_PASSWORD', 'qwer1234' );
+ 30
+ 31 /** Database hostname */
+ 32 define( 'DB_HOST', '10.0.157.143' );(DB서버의 아이피)
+
+mysql 클라이언트도 설치하고....어....... 모르겠다
+
+웹에서 접속이 되지 않는다는 메시지가 뜨면 conf나 vi 편집기에서 잘못 넣은게 있나 보는게 좋다
+(sudo vi로)
+
+RDS: 관계형 데이터베이스로 패키지 처럼 AWS가 모아둔 도구들을 우리가 설치하지 않고도 사용할 수 있게 해주는 서비스? 그런 개념, 프로그램이 설치된 가상머신
+서비스 >데이터베이스>RDS로 가서 데이터베이스 생성
+마리아디비 10.6.10 프리티어 선택
+설정>인스턴스 이름 바꿔주고 마스터 암호에서 암호 넣어주기
+DB인스턴스 클래스는 넘어가고, 연결에서 EC2 컴퓨팅 리소스에 연결(만들어 둔 인스턴스랑 연결하기 위해)
+하단 ec2 인스턴스에서 웹2번 서버 선택하였다, vpc는 ec2 인스턴스랑 연결했기 때문에 바로 연결해준다
+vpc 보안그룹은 db용으로 선택했다
+하단의 추가 구성의 데이터베이스 옵션의 이름은 db의 wordpress 이름
+백업은 자동백업 체크해제, 암호화도 비활성, 유지관리의 마이너 버전 자동 업그레이드 체크해제
+
+엔드포인트 및 포트 중요하다
+데이터베이스가 생성이 되면 vi로 편집했던 /var/www/html/wp-config.php 파일의
+32 define( 'DB_HOST', '10.0.157.143' );(DB서버의 아이피) 이 부분의 아이피를 RDS의 데이터베이스가 생성이 되면 엔드포인트를 복사하여 붙여넣기 해줘야
+wordpress와 RDS가 상호작용을 할 수 있고 wp-config.php파일의 이름을 수정할 때 엔드포인트 뿐 아니라 이름이랑 비밀번호도 RDS 만들 때 했던
+설정 그대로 해야한다. 자세한 내용은 데이터베이스의 생성한 RDS 파일을 눌러 세부정보를 보면 알 수 있다
+접속을 할 때 엔드포인트를 웹 주소창에 넣는 것이 아니라 웹서버의 퍼블릭 IP를 넣어 워드프레스를 실행 시킬 수 있다.
+(개념이 엔드포인트=IP가 아니라, wp-config 파일을 RDS 정보로 수정을 해도 웹서버의 IP로 웹접속을 할 수 있다는 개념이었다)
