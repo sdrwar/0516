@@ -1,0 +1,37 @@
+애저 (Azure) 지영재 강사님
+yjji@hotmail.com
+
+https://lrl.kr/Ekr5
+http://lrl.kr/z8l4
+
+※ 유튜브에서 애저 강의 보자
+
+godeploy.it
+sdrwar@gmail.com (ID)
+ZKAL@ (PW)
+
+portal.azure.com
+
+8월부터 바뀌는..?
+AAD->Microsoft Entra
+Azure AD(Active Directory) -> Entra Id
+
+애저 사용을 하려면 구독을 해야하고 MS계정으로 로그인을 해야 한다.
+
+기본적인 애저 용어
+Identity: 숫자로 된 ID (Azure가 식별하는 것은 계정이 아닌 ID)
+Account: 계정
+Azure AD account
+Azure AD tenant/directory
+Azure subscription: 클라우드 서비스로 청구되는 애저의 구독
+
+테넌트는 독립적인 구조 / 온프레미스는 계층 구조..
+
+테넌트와 서브스크립션의 관계..
+
+디바이스(장치)를 테넌트에 등록할 수 있음 MS계정을 통해 디바이스를 등록 가능 MDM(모바일 디바이스 매니지먼트) MAM를 통해 디바이스 제어 가능
+(intune MDM)
+
+테넌트 만든 후 해당 테넌트로 전환 ->사용자 ->사용자 만들기
+
+테넌트 만들기, 사용자 만들기, 그룹 만들기, 라이선스 등록, 하이브리드 싱크 구성, 다이나믹 계정, 정책 만들어 할당하기
