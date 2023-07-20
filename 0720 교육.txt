@@ -1,0 +1,44 @@
+아마존 스킬빌더(아마존 계정 생성 및 스킬 빌더 사용)
+https://aws.amazon.com/ko/training/learn-about/security/?th=tile&tile=learnabout (보안 스킬빌더 홈)
+https://explore.skillbuilder.aws/learn/learning_plan/view/849/Security-Learning-Plan-Korean- (보안 러닝 플랜 시작하기)
+
+ㅁAzure Storage Account (스토리지 계정)
+-Azure에서 데이터를 저장하고 관리할 수 있는 서비스
+•주요 특징
+1. 다양한 유형의 데이터를 저장할 수 있다
+2. 데이터를 안전하게 보호할 수 있다
+3. 데이터에 대한 엑세스를 제어할 수 있다
+4. 데이터를 효율적으로 관리할 수 있다
+
+ㅁAzure Storage Account는 다양한 서비스와 함께 사용될 수 있다 (강력한 통합)
+-Azure Virtual Machines: 가상머신에 대한 데이터를 동적으로 생성할 수 있다, Azure Storage Account에 저장이 된다
+-Azure Blob Storage: 대용량의 비정형 데이터(이미지, 동영상, 문서 파일 등)를 저장하는데 사용, Azure Storage Account의 Blob 컨테이너에 저장
+-Azure Files: 클라우드에서 쉽게 액세스할 수 있는 파일 공유를 제공,  Azure Storage 계정의 파일 공유에 저장
+-Azure Queues: Azure Queues는 메시지를 처리하는 데 사용되는 스케줄링 시스템, Azure Storage 계정의 Queue 컨테이너에 저장
+-Azure Tables: Azure Tables는 대량의 구조화된 데이터를 저장하고 검색할 때 사용, Azure Storage 계정의 테이블에 저장
+-Azure Backup: Azure Backup은 가상 머신, 파일 및 애플리케이션 데이터에 대한 백업을 수행할 때 사용, Azure Storage 계정에 저장
+
+ㅁAzure Storage Account의 대표적인 서비스
+•Azure Blob Storage: Azure Blob Storage는 Azure에서 대용량의 비정형 데이터를 저장하는 가장 간단한 방법입니다.
+예를 들어, 이미지, 비디오, 음악 파일을 저장하는 데 사용됩니다.
+•Azure File Storage: Azure File Storage는 응용 프로그램 및 서비스에 대한 파일 공유를 제공합니다. 
+여러 클라이언트에서 쉽게 액세스할 수 있으며, 파일 공유를 쉽게 프로비저닝합니다.
+•Azure Queue Storage: Azure Queue Storage는 메시지 기반 스케줄링 시스템으로, Azure 서비스 간 또는 최종 사용자와 Azure 서비스 간 통신에 사용됩니다.
+•Azure Table Storage: Azure Table Storage는 대규모의 구조화된 데이터를 저장하고 검색할 수 있는 NoSQL 데이터베이스로, IoT, 웹 및 모바일 애플리케이션에서 사용됩니다.
+•Azure Disk Storage: Azure Disk Storage는 Azure Virtual Machines(Virtual Machine Scale Sets 포함)용 디스크를 동적으로 생성하여 관리할 수 있으며, 
+이를 Azure Storage Account에 저장합니다.
+•Azure Backup: Azure Backup은 Azure Virtual Machine과 파일 서버에 백업을 수행하는 Marketing 상위서비스중 하나입니다.
+
+-Blob Storage 만들기의 기본적인 순서
+Azure Portal에 접속 및 로그인->리소스 만들기->Storage->Blob Storage->다음->이름 입력->리전 선택->다음->스토리지 계정 유형 선택->다음
+볼륨크기 선택->다음->보안 선택->암호화 선택->다음->요약->만들기
+
+-엑세스 티어의 설명
+Hot: 데이터를 자주 읽는 경우에 적합(빈번한 사용에 최적화 됨)
+Cool: 데이터를 자주 읽고, 덜 쓰는 경우에 적합(저장에 최적화 됨)
+Archive: 데이터를 자주 읽지 않는 경우에 적합(데이터에 최적화 됨)
+
+-Blob Lifecycle 관리
+성능 및 비용 최적화를 위해 cooler 스토리지 계층으로 전환
+수명 주기 종료 시 Blob 삭제
+스토리지에서 필터링된 경로에 규칙 적용(??무슨 말인지 모르겠음)
