@@ -1,0 +1,31 @@
+오승욱 강사님 (멀티클라우드 & 미니프로젝트 강사님)
+uvely@naver.com
+https://url.kr/tfjnq7
+면접 팁 - 신문이나 뉴스를 많이 보아 깊지 않더라도 넓게 알면 좋다.
+
+■멀티 클라우드란?
+-서로 다른 클라우드 서비스를 마이그레이션 하는?
+ㅁ애플리케이션 마이그레이션?
+ㅁDevOps?
+ㅁ가상화 기술?, 자동화 과정?
+ㅁCMP(Cloud Management Platform)-멀티클라우드 환경에서 클라우드 리소스를 관리하고 모니터링하는 데 사용되는 소프트웨어
+ex)신세계-spharos cmp
+ㅁCSP(Cloud Service Provider)-클라우드 서비스를 제공하는 회사
+ㅁMSP(Managed Service Provider)-클라우드 서비스를 관리해주는 회사
+ 클라우드 인프라를 제공하고, 클라우드 서비스를 관리하고, 클라우드 서비스를 최적화하는 등의 서비스
+ㅁH.A 기능 (High Availability)-클라우드 환경에서 서비스가 중단되지 않도록 하는 기술
+ H.A는 여러 대의 서버를 사용하거나, 클라우드 서비스 제공업체에서 제공하는 H.A 서비스를 사용해서 구현할 수 있다
+ㅁ오픈 이노베이션
+
+■미니프로젝트 관련
+-10 for 10 brainstorming
+개인 별 10개의 아이디어, 40~50개의 아이디어 중 10개를 선별, 아이디어별 단계 나누기
+
+Pair Programming
+하나의 PC에 두 명의 사용자가 아이디어를 덧붙이며 프로그래밍 하는 것?
+
+Mobbing Programming
+여러 사용자가 함께 특정한 공간에서 프로그래밍 하는 것(한 명의 네비게이터가 설명을 하고 여러 사용자들이 자유롭게 아이디어를 내는 방식)
+
+4Ls 회고(4Ls retrospective) 프로젝트에서
+loved 좋았던 것, loasthed 좋지않았던 것, learned 배운 것, longed for 바랬던 것
