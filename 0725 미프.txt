@@ -1,0 +1,53 @@
+https://url.kr/3hkfbt
+Docker를 사용하기 위한 준비 단계
+-Virtual Machine (ex.VMware workstation) - 리눅스 OS
+-터미널 프로그램(mobaxterm)
+
+-버추얼라이제이션(서버 가상화)
+-컨테이너라이제이션(어플리케이션 가상화)
+
+ㅁ가상머신 실행 후 ip(me: 192.168.5.137) 를 찾고 mobaxterm를 다운로드, 모바x 실행 후 좌측 상단 세션 ->SSH-> 가상머신의 ip 입력 ->root->비밀번호입력
+가상머신 종료 후 -> 에디트 -> 네트워크어댑터 하단 add -> 어댑터 추가 -> 우측 NAT 밑의 Host only 선택(윈도우의 SSH접속만 할 것이기 때문에)
+가상머신 실행 후 ip addr show 아이피 확인 후 모바x에서 ssh 접속	(192.168.5.129)후 비밀번호 입력
+curl https://get.docker.com | sh 로 도커를 설치 -> centos8 버전에서는 되지 않음 centos9(192.168.5.139)
+yum install git, git clone https://github.com/uvelyster/demo.git->docker build -t testimage . (컨테이너안에서 테스트 이미지 만들기)
+
+hub.docker.com: docker이미지를 공유하는 사이트?? 무료 가입 후 업로드 다운로드를 할 수 있다
+
+-docker file 작성 -> docker build -t image . 명령어로 이미지 작성
+->docker tag image docker.io/Account/IMAGE
+->docker login dockr.io
+->docker push docker.io/Account/IMAGE
+->docker run -d -p
+port:port docker.io/Account/IMAGE
+
+
+-대문자로 표시된 명령어 (RUN, CMD 등) 인스트럭션(instruction) - 지시문
+
+-Container = Runtime + Source Code, 종속적인 라이브러리에 격리된 환경으로 프로그램을 설치하는 .. 검색필요..
+-VM = Kernel + Runtime + Source
+
+-AWS의 Hipervisor = KVM 기반 Nitro (예전에는 Zen등의 하이버바이저를 사용하였다)
+
+-컨테이너는 커널을 포함하지 않고, 부팅을 하지 않고 run한다 실행한다라고 표현을한다.(개념설명 보충 필요, 구글링이나 검색)
+-Kernel: 하드웨어와 응용 프로그램 사이의 인터페이스 역할,하드웨어 자원을 관리하고, 응용 프로그램이 하드웨어를 사용할 수 있도록 한다
+커널은 운영 체제의 핵심 부분이기 때문에, 커널이 없으면 운영 체제를 사용할 수 없다
+
+ㅁ컨테이너 기동
+ㅁ컨테이너 포트 포워딩
+ㅁ컨테이너 볼륨
+ㅁ컨테이너 이미지 제작
+-Container 실행 이미지 (OS가 없어 설치 이미지가 없다)
+
+-VM image
+ -OS 설치 이미지
+ - VM 실행 이미지
+ㅁHypervisor마다 이미지 포멧이 상이하다
+
+■Docker: 데이터 또는 프로그램을 격리시키는 기능을 제공하는 소프트웨어
+이러한 조립형 창고를 컨테이너라고 하는데, 이 컨테이너를 다루는 기능을 제공하는 소프트웨어가 Docker이다
+도커는 기본적으로 리눅스용이지만, 윈도우와 macOS에서도 사용할 수 있다(교육과정에서는 윈도우와 macOS는 사용하지 않는다)
+도커 컨테이너는 기본적으로 쓰고 버리는 일회용품이라고 생각하면 된다
+Dockerfile: 이미지를 만드는 것 밖에 할 수 없다(도커 이미지 파일)
+
+-시대 흐름 상 컨테이너 기술이 중요하고 바뀌는 추세다 컨테이너 기술과 쿠버네틱스를 중점으로 공부해야한다
