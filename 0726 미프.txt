@@ -1,0 +1,13 @@
+aws cloudwatch: 모니터링 서비스
+AWS Systems Manager: ec2의 리소스 관리 서비스
+aws elastic beanstalk: ec2를 손쉽게 생성 및 관리, 어플리케이션을 직접 관리하지 않고 시스템 구축
+
+cloudwatch
+aws 퍼블릭 서비스(S3와 같이 ec2에서 접속하기 위해선 인터넷 게이트웨이를 통해 나가서 들어와야 한다)
+aws 서비스의 모니터링을 할 수 있다
+
+람다함수를 이용해 이벤트 브릿지로 클라우드와치 경보설정.
+람다 블루프린트 선택 블루프린트->IT 항목 스케츌 애니 url로 url 헬스 체크
+규칙은 알아서 healthcheck 규칙 유형 예약 표현식 / 예약 표현식은 rate(5 minutes) 같은 예시(Cron 또는 rate 표현식의 도움말 참고)
+
+
