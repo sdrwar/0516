@@ -1,0 +1,3 @@
+https://towardsaws.com/cloudwatch-lamba-subscription-filter-cdk-demo-f0eb571547c6
+
+클라우드와치 아키텍처
