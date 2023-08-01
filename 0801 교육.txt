@@ -1,0 +1,68 @@
+(2~4장이 중요한 내용)
+-dockerd와 containerd의 역할의 공통점 및 차이점?
+-aws에 ssh로 접속하기 위한 퍼블릭 키와 프라이빗 키의 복사 방법?
+-퍼블릭 키를 이용한 aws 인스턴스 접속 및 프라빗 키를 이용한 aws 인스턴스로의 ssh 접속?
+
+■Docker 볼륨 관리
+-
+컨테이너의 철학: 최대한 가볍게, 빠르게, 적게
+
+Linux의 /(root)와 swap
+/: 
+swap: 메모리, based on hard disk
+cat /etc/fstab 으로 확인
+
+: 마운트.... 개념을 잘 모르겠음.
+
+CoW: Copy on Write, 컨테이너 생성 시 Read Only인 이미지를 쓰기가 가능한 레이어를 추가함으로써 컨테이너로 추가하여 만듦, Union Mount의 특징
+
+https://quay.io/user/sdrwar/ : 비번 qnltbem
+quay.io: 레지스트리?
+76p 라이브러리: 사용자 이름
+퍼블릭과 프라이빗의 차이는 포트번호의 추가(프라이빗에 유저이름이 들어가지 않는 이유는 어차피 프라이빗을 이용하는 유저는 정해져 있기 때문에)
+
+Image 명령어 중 중요한 명령어들: create, inspect, save, load 등
+
+터미널에서
+# docker login quay.io를 하여 로그인을 할 수 있다.
+최초 로그인 시도시 Error response from daemon: Get "https://quay.io/v2/": unauthorized: Invalid Username or Password가 뜬다면
+웹페이지로 들어가 비밀번호를 변경해 주는데 기존에 있던 비밀번호로 바꿔도 상관없으니 변경 후 로그인 시도를 한다
+
+Commit: 컨테이너를 이미지로 만드는 명령어
+tag: 이미지의 버전, 명령어로 사용시 복사, 이름변경등의 기능이 있다
+
+Docker 이미지 생성했을 때 index.html의 터미널 확인은 localhost:8180/index.html로 확인이 가능하고, 웹페이지에서는 작업하고 있는 터미널의 퍼블릭 IP
+213.0.113.3:8180/index.html로 확인할 수 있다
+
+터미널에서 푸시 후 웹페이지에서(로그인 후)확인할 수 있다
+
+62p 도커 컨테이너 개념 설명 중요
+
+Dockerfile build 명령어시 docker build -t web_img . 에서의 .은 리눅스에서 배웠다시피 현재 디렉토리라는 뜻이고 현재 디렉토리에 Dockerfile이 있다라는 의미
+그래서 현재 디렉토리에 있는 도커 파일이 실행..??? 이건 잘 모르겠..
+
+AWS 인스턴스로 접속한 터미널에서 
+# docker pull quay.io/sdrwar/official-httpd:v1.0 명령어로 push한 official-httpd의 v1.0을 다운로드(pull) 할 수 있다
+aws ecr(Elastic Container Service)를 사용하기 전 aws의 공개키와 비밀키가 있어야 한다 aws configure로 입력할 수 있다
+ecr의 레파지토리를 생성한 후 해당 레파지토리를 클릭 후 우측 상단에 푸시 명령을 보면 자세한 주소(접속할 수 있는 주소)를 알 수 있다
+
+※RUN
+run 명령어 실행 시 더블 앰버샌드 &&를 사용하면 다음 순서를 정해줄 수 있다 \를 이용해 가독성까지 생각할 수 있다
+
+1)첫번째 방법 
+RUN yum --disablerepo=* --enablerepo="centos-7-server-rpms" 
+RUN yum update -y 
+RUN yum install -y nginx
+
+2)두번째 방법
+RUN yum --disablerepo=* --enablerepo="centos-7-server-rpms" && yum update -y && yum install -y nginx 
+
+3)세번째 방법 
+RUN yum --disablerepo=* --enablerepo="centos-7-server-rpms" && \ 
+yum update -y && \ 
+yum install -y nginx
+
+[c:\keys] scp docker-entrypoint.sh -i "docker.pem" ec2-user@인스턴스IP:
+
+portainer.io 세팅 시 aws에서의 보안 그룹을 잘 확인하고 portainer에 할당 된 포트번호(여기선 9000으로 했다)를 인바운드 규칙에 9000번을 추가하자
+사용자 지정 TCP
