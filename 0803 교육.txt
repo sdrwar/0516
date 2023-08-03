@@ -1,0 +1,89 @@
+새 AWS IAM 계정
+722196413240
+ssg307-4
+zkal@
+
+8월 2일 했던 내용
+■v1.8의 8장 registry 생성 및 network 이론 설명
+-network의 bridge 사용 및 개념 설명과 bridge실습 / aws의 server-a, server-b의 root 접속 및 docker이미지 생성 및 a->b, b->a 간의 pull, push
+컨테이너,이미지 삭제 및 push로 다시 다운 받고 이미지 다운로드 및 컨테이너 생성
+
+0803
+■aws server-a와 server-b에서 네트워크 생성 및 ping 확인, 서로의 서버에 ping 보내고 ip확인(172.16.1.0과 172.16.2.0이 나오는 지 확인)
+네트워크 생성 및 컨테이너 생성, 두 개의 컨테이너 생성 및 컨테이너로 접속 후 ip확인 (# ip a)
+-hosts 파일의 역할 (cat /etc/hosts)
+ip를 vim /etc/hosts 할 때에는 퍼블릭이 아닌 프라이빗 아이피로 등록(ex. 172.x.x.x)
+ip가 아닌 이름을 가지고 ping을 테스트 할 수 있었는데 이유는?
+리눅스에서 이름으로 접속하는 방법?? (hosts / DNS / NIS) - NIS는 잘 사용하지 않는다
+
+ㅁXshell을 이용한 AWS 인스턴스 로그인 시 보안그룹의 인바운드 규칙에 SSH와 HTTP등을 추가하면 블로그 방법대로 로그인 할 수 있다
+
+ㅁdocker compose의 사용법과 개념
+-compose가 생성하는 것 service = container
+-.yml 파일에서 중요한 것 > 들여쓰기(들여쓰기의 위치로 하위요소와 동등요소를 알 수 있다)
+
+ㅁ교재에 있는 다운로드 링크 버전은 라이브러리 지원이 되지 않아 메모장에 써준 git 링크의 버전을 다운받아야 한다
+Jenkins를 이용해 프로젝트를 하는 것을 권장(코드를 업로드 다운로드 할 수 있는 협업 앱)
+
+ㅁ장고를 설치할 때 젠킨스가 설치된 컨테이너를 삭제해야 장고의 8000번 포트 충돌을 피할 수 있다
+
+※Docker Swarm
+Docker와 개념이 약간 다르다
+-Ochestration: 하나의 프로그램으로 개별 컨테이너들을 조정, 관리하는 작업
+-매니저의 개념이 추가가 되었다: 전체 노드들을 관리하는 개념 / nodes(worker nodes: 실제로 작업하는 프로그램, 컴퓨터)
+-docker와의 가장 큰 차이점: 컨테이너 자동배치 및 '복제'
+-docker swarm manager에서는 컨테이너가 생성이 될 수도 있고, 안될 수도 있다
+(회사마다 다른데 docker swarm은 허용하고 있고, 쿠버네티스는 허용하지 않는다)
+-153p 의 도커 서비스 복제의 동일 port 접속의 이해가 필요하고 이것이 docker와 docker swarm이 다른 점이다
+-core-03의 ip:4567로 접속을 하더라도 어플리케이션이 없으면 core-02나 core-01로 연결된다(클러스터 개념)
+
+■Docker Swarm 클러스터 연결 과정
+서버c를 만든 후 (t2.small / 스토리지 8기가를 20기가, 옆에 매그내틱으로 설정)
+서버c에서 vim /etc/hosts를 연 후 
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+172.31.19.156   servera.example.com     servera
+172.31.33.114   serverb.example.com     serverb
+172.31.4.218    serverc.example.com     serverc
+로 설정 후 (서버a와 서버b도 되어있지 않으면 같이 바꿔주고 # hostnamectl set-hostname server(a,b,c).example.com후 bash 하는것도 해야한다)
+[serverc~]# dnf install docker로 도커 설치도 필수
+servera와 serverb로의 핑 테스트도 해보고 servera에서 b,c와의 핑테스트 등도 같이 해줘야 한다(#  ping -c3 servera)
+
+교재의 docker swarm init –-advertise-addr=213.0.113.3를 서버a의 프라이빗주소(hosts파일에 있는 ip)로 변경하고 인잇을 하고
+(나의 경우 # docker swarm init --advertise-addr=172.31.19.156)
+to add 밑에 있는 docker swarm join 주소를 복사한 후 서버b와 서버c에도 넣어주고 aws 보안그룹에서 2377포트도 연 후
+docker node ls를 하여 매니저와 노드관계가 잘 생성 되었는지 서버a에서 확인한다
+servera에 있는 컨테이너, 컴포즈들도 다 삭제한 후에 실습을 진행(충돌날 수 있다고 한다)
+
+실습 88p의 web_server가 아니라 nginx로 바로 다운로드 할 수 있게 실습(이미지를 생성하고 다운로드 해야 하므로 번거로워 바로 다운로드 한다)
+
+ㅁdocker service ps web_swarm으로 연결된 swarm 확인
+ㅁdocker service scale web_swarm=10으로 swarm 스케일 조절 가능
+
+ㅁ클라우드 특강(현직자 특강)
+-클라우드는 클라우드 인프라 / 클라우드 개발 부분으로 크게 나눌 수 있다
+-기업에서는 하이브리드 클라우드를 대세로 쓰고있다
+-HCI.. ? (신세계 클라우드는 HCI 기반 Private Cloud 서비스를 사용)
+-HC(하이퍼 컨버지드 인프라)I: 가상화뿐만 아니라 하드웨어까지 신경 쓴.. 
+-HCI 출현 배경 3가지(비즈니스 목적에 따라 더 빠르게 시장 공략, 단순하고 빠른 운영, 클라우드와 유사한 확장성과 비용구조)
+
+ㅁ자기개발 열심히 하는 사람, 주도적인 사람이 되는 것이 좋다
+ㅁ인프라에 관한 지식을 공부해보자(개발분야는 언어만 잘쓰면 된다)
+ㅁIT용어들 잘 숙지하고 클라우드 서비스에 관심갖고 써보기도 하고(면접때 중요), 기술에 관심을 갖고 뒤떨어지지 말아라
+ㅁ클라우드 산업은 계속 늘어나고 있지만 (쓸만하고 퀄리티 높은)인재는 부족하다
+ㅁ신입,열정과 자신이 지원하는 분야에 대한 지식(틀려도됨)과 관심과 의지, 단점도 장점으로 어필하는 자기어필 능력, 실력이 추가되면 금상첨화
+ㅁ트렌디한 용어들 숙지
+ㅁ솔루션 아키텍처, 시스템 아키텍처 등등 잘 알아보자. 아키텍처...
+ㅁMSA / open API, CICD, / cloud, container, MSA, DevOps,
+ㅁAWS 솔루션 아키텍처 등의 자격증은 가지고 있는 것이 나쁘지 않다(채용 시 우대)
+ㅁ넷플릭스 jull 아키텍처 등의 예시는 잘 만들어져있으니 참고하는 것도 좋다
+ㅁDDD?
+ㅁAgile/DevOps, Scrum Process 
+ㅁ개발부터 배포까지 파이프라인을 잘 알아둬야한다
+ㅁ지원을 할 때 에는 질문을 하게끔, 궁금해하는 지원자가 되는 것이 중요
+ㅁ자기만의 소스, 블로그 등을 꾸준히 기록으로 남기는 것도 중요
+ㅁ지원동기 등은 구체적으로, 이 회사에 지원하게 된 계기등도 구체적으로
+ㅁ내가 잘할 수 있다는 것을 어필(잘하는 사람을 뽑는게 아니라 잘 할 사람을 뽑기 때문에)
+
+■Docker Rolling Update & Rollback은 졸아서 실습 못함, 따로 살펴보고 실습 할 것
+■Docker swarm 컨테이너간 통신 확인
+92p (네트워크 '적용한' 서비스 생성: 미리 생성한 이미지든, 엔진x든, 센트os든 네트워크를 swarm으로 터널링 연결 후 하는 서비스 같음)
