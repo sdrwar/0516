@@ -1,0 +1,64 @@
+각 인스턴스 서버에 이미지를 만들고(88p 참고) Dockerfile을 이용해 이미지를 만들고 실행 시킨 뒤, 그 이미지로 컨테이너를 만들고
+92p의 명령어로 실행
+-docker build -t web_server:latest .
+-docker service create --name web_swarm --replicas=2 -p 80:80 web_server:latest
+-docker network create --driver=overlay overnet (각 서버)
+-docker service create --name webserver --replicas=3 -p 80:80 --network=overnet web_server:latest (매니저 서버)
+-docker exec -it 컨테이너_아이디 /bin/bash (전체)
+-yum install net-tools iproute -y (전체)
+-ip a (전체)
+-ping -c3 각swarm network ip로 ping이 잘 가는지 확인
+
+ㅁkonan이라는 새로운 유저 생성 후 프라이빗 키를 만들고 복사하여 servera등으로 ssh 접속하는 방법(중요하다고 한다)
+-konan이라는 유저 이름으로 servera를 ssh접속하는 방법
+-aws의 ssh 퍼블릭 키와 프라이빗 키의 개념
+-
+
+ㅁsudo와 wheel 그룹의 개념
+
+
+■Docker Applications
+-docker swarm을 이용한 wordpress와 mariadb의 설치 및 접속
+
+■Docker Monitoring
+-Prometheus의 장점 및 단점 소개
+-Monitoring Tools의 소개 및 설명
+-Cadvisor 설정하기의 주소를 구글이 아닌 gcr.io로 변경해야 웹페이지에서 Cadvisor가 동작한다
+# docker run --volume=/:/rootfs:ro --volume=/var/run:/var/run:rw --volume=/sys:/sys:ro --volume=/var/lib/docker:/var/lib/docker:ro --volume=/dev/disk:/dev/disk:ro -p 8080:8080 --detach=true --name=cadvisor gcr.io/cadvisor/cadvisor
+
+ㅁPrometheus 설정하기(servera) # vim prometheus-cadvisor.yml
+scrape_configs:
+	- job_name: 'prometheus' 
+		static_configs: 
+		- targets: ['localhost:9090'] 
+	- job_name: cadvisor 
+		scrape_interval: 5s 
+		static_configs: 
+		- targets: ['18.143.129.74:8080','18.142.136.113:8080'] #서버B의 아이피 서버 C의 아이피
+	- job_name: 'node_exporter' 
+		scrape_interval: 5s 
+		static_configs: 
+		- targets: ['18.143.129.74:9100','18.142.136.113:9100'] #서버B의 아이피 서버 C의 아이피
+
+104p 교재의 명령 코드가 아니라
+docker run -d --name prometheus -h prometheus -p 9090:9090 -v $(pwd)/prometheus-cadvisor.yml:/etc/prometheus/prometheus.yml --config.file="/etc/prometheus/prometheus.yml" prom/prometheus:v1.7.0
+
+gpt4에게 물어본 결과 코드로 해야 설치가 된다
+docker run -d --name prometheus -h prometheus -p 9090:9090 -v $(pwd)/prometheus-cadvisor.yml:/etc/prometheus/prometheus.yml prom/prometheus:v1.7.0 --config.file="/etc/prometheus/prometheus.yml"
+
+config파일에 문제가 있는 것 같다, localhost:9090으로 접속이 되지 않았다(보안그룹에서 TCP 9090 포트 연 후)
+
+ㅁgpt 말대로 yml의 들여쓰기가 잘못되어 컨테이너를 다 삭제하고 다시 프로메테우스와 그라파나를 설치하니 접속이 되었다
+ㅁ106p의 import dashboard는 로고 선택 후 dashboard -> import 항목에서 볼 수 있다
+
+ㅁAWS에서는 podman의 설치가 잘 되지않아 master node에서 작업
+-docker는 clinet와 server가 뜨는 daemon이 있지만, podman은 clinet만 있는 daemon이 없는 프로그램이다
+-podman의 레지스트리는 기본적으로 3개를 가지고 있어 pull할 때 마다 화살표로 선택해줘야 한다
+-cd /etc/containers 안의 regestries.conf 파일에서 22번째 줄에서 다운로드의 레지스트리 경로를 삭제를 해줄 수 있다(기본적으로 docker.io를 사용한다)
+-podman에서의 컨테이너 생성 시 url 주소까지 입력해주어야 한다
+(ex. # podman run -d --name httpd -p 8080:80 docker.io/library/httpd)
+-docker와 podman의 차이점 podman의 generate 명령어 / 컨테이너 생성과 시작관련 명령어(daemon이 없기 때문에 enable을 대체할 명령어 문장)
+(1. podman generate systemd nginx > /etc/systemd/system/nginx.service)
+(2. systemctl enable --now nginx)
+
+
