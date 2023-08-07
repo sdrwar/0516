@@ -1,0 +1,71 @@
+■Kubernetes 이론 및 설치
+-AWS 에서는 OS 문제로 CentOS 말고  Ubuntu로 실습
+-우분투 서버 3개를 생성 후 (ec2-user가 아닌 ubuntu로 변경 후에 접속) sudo hostnamectl로 호스트 이름부터 바꾼다
+-sudo -i로 루트 권한으로 접속하던지 sudo 명령어로 계속 하던지 해서 
+apt update / sudo apt install net-tools -y로 nettools 부터 설치해준다(핑 명령어가 없으므로)
+설치가 다 되었으면 vim /etc/hosts로 기존에 도커 스웜에서 했던 호스트 파일을 등록해준다(host이름과 ip를 입력해준다)
+
+172.31.28.124	master	master.example.com
+172.31.35.86	worker1	worker1.example.com
+172.31.13.217	worker2	worker2.example.com
+
+ping -c3 master / worker1 / worker2로 각각의 서버에서 핑테스트를 한다
+
+ㅁ쿠버네티스의 중요 키워드: 자동화
+-쿠버네티스의 단점: GUI가 부족하다 (Dashboard, Docker의 포테이너보다 떨어진다)
+-쿠버네티스 목차 Part II의 Object 부분 중요하다(종류도 엄청 많다고 한다)
+-Helm: pod를 전문적으로 사용하기 위한 컨테이너 매니저의 개념
+-Openshift: RedHat에서 판매하는 상용화 제품 (실무에서 자주 사용한다, kube를 사용하고 개념을 이해하면 사용하기 수월하다고 함)
+-kube: opensource
+-observe: 현재 상태를 뜻함/Diff: /Act: ③에서 설명 나와있다
+-pod: 컨테이너의 그룹(1개 이상)
+-aws ecs: 컨테이너 서비스(기본 docker) eks: 쿠버네티스 서비스(기본이 kube)
+-docker < kube < openshift (규모에 따라 쓰이는 프로그램이 차이가 난다)
+-Telemetry: 비용계산에 도움을 주는 기능/Storage도 docker와 살짝 개념이 다르다(서버 쪽에 더 가깝다고 함)
+-Service: Docker에서의 Client 접속을 위한 IP:Port의 개념과 비슷하다
+-AWS의 클라우드를 운영하기 위한 전용 OS: 유클리투스? (Azure와 GCP도 똑같이 클라우드 전용 OS가 있다)
+-kube-스케쥴러: 컨테이너를 배치해주는 기능
+-pod가 사용하는 ip는 동적이라 너무 자주바뀌어 유저가(클라이언트가)접속할 때 service를 통하고 service는 apiserver로 연결해 pod와 연결을 해준다
+
+ㅁKubernetes 설치
+-6443, 10250-10252, 30000-32767등 보안그룹에 인바운드 규칙 편집으로 TCP포트를 추가하고, Docker에서 사용했지만 kube에서 사용하지 않는 포트는
+삭제를한다
+-hostname까지는 진행했으니 swap비활성화를 한다
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - (하이픈이 pdf에서 이상하니 직접 수정을 한다)
+-4) Docker 환경 설정시 $USER: '현재 사용자', root면 넣지 않아도 된다
+-docker와 다르게 CNI(Container Network Interface)를 설치해줘야 한다, 대부분의 설정 파일은 yaml파일로 이루어져있다
+-3. Master 노드 설정부터는 Master에서만 작업한다 (Docker Swarm설정할 때 처럼 kubeadm이후의 값들을 Worker 1,2에 명령어로 넣어줘 node 연결을 한다
+-https:://url을 복붙할 때에는 공란(스페이스)이 있어서는 안된다
+-worker1,2를 다 연결을 해야 클러스터가 만들어진다
+-kubectl get node -o wide로 상세정보를 알 수 있다(get 명령어는 자주 사용한다고 하니 기억해두자)
+-kubectl get pods --all-namespaces 명령어로 클러스터 내의 존재하는 모든 네임스페이스에 대해 실행중인 pods들의 목록을 조회 및 출력을 하는 용도로 쓴다
+-image=>container까지는 docker에서도 나오는 개념이었으나, image=>container=>pod=>deployment=>service=>route까지의 개념이 kube에서 나온다
+-deploy(swarm의 scale 개념), pod로 생성하면 docker의 run개념이라 컨테이너 하나를 만들고 복제를 하질 못하고, deploy를 하면 service create 개념처럼
+복제를 한다
+-service의 축약 명령어 svc
+-delete시에 deploy와 svc 둘 다 삭제해주어야 한다(둘은 별도의 오브젝트로 분류되기 때문에)
+ㅁCKA(쿠버네틱스 자격증 중 하나)인기있는 자격증 중 하나라고 함 / 8월 12, 13일 정도 오승욱강사님 메일로 스터디 신청 받으신다고 함
+-API YAML 구조 중 spec이 제일 중요(구조를 이해하면 yaml파일을 보기 쉬워진다)
+-service는 pod의 ip는 신뢰하지 않지만(동적ip라 자주 바뀌기 때문에)port와 name은 신뢰하여 pod를 찾아서 연결을 시킨다 (이때 사용하는 개념이 selector)
+-port와 name은 바뀌지 않기 때문에
+-namespace의 약자 ns
+-svc 등을 설치할 때 이름을 지정하지 않으면 ns의 default에 저장 된다(삭제할 때는 디폴트만 삭제하면 된다
+-Chapter 3 Kubernetes Pod & Namespace부터 (2의 dashboard는 아직 실습하지않았다)
+-docker의 inspect 명령어는 kube의 describe 명령어와 하는 역할이 같다(상세 정보 보기)
+ㅁkubectl describe svc nginx의 port 읽고 이해하는 방식(중요)
+-port의 종류 3가지 port는 pod의 port, target port는 svc의 port가 아닌 ,node port는 외부에서 접속하는 port(node port의 80번 포트는 cluster 내부의 포트)
+target 서비스가 target port는 결국엔 pods의 port와 같아야 한다(svc가 pod를 찾게 하기 위해)
+클라이언트 -> node 포트 -> 클러스터 포트 -> 타겟포트 -> pods 포트 (외부->내부->외부 등의 방식으로)
+target port는 svc가 사용하는 포트
+svc가 pods와 연결할 수 있는 방법 이름, 포트, 아이피
+-pod에 접속해서 index.html파일을 echo할 때 html 디렉토리가 없으면 만들고 하자
+-kubectl get pods -n kube-system에서 kube system의 namespace가 가장 중요하다
+-kubectl config current context 에서의 context는 사용자를 가리킨다
+-get-contexts는 확인 set-contexts는 설정(namespace)
+-token의 개념?
+-vim .kube/config로 kubenetes의 설정 정보, 현재 내 위치등을 실시간으로 알 수 있다(수동으로 바꾸면 안됨, 확인만 할 것, 변경은 kubectl로)
+-리눅스에서의 사용자의 정보는 /etc/passwd /etc/shadow에 있다 (grep ubuntu /etc/passwd /etc/shadow)
+-/etc/shadow:ubuntu:!:19576 의 ! 다음 숫자는 1970-01-01로 부터 추가된 날짜에 설치되었다는 뜻(설치 일자를 뜻한다)1970-01-01에 +19576일을 하면
+설치날짜와 똑같다
+-/etc/shadow:ubuntu:$6$pjFZpNtjF6uEdCvY$에서의 $$사이의 값은 salt값이라고 부르며 패스워드가 똑같아도 output이 달라지기 때문에 값이 동일할수
+있는 확률이 희귀하게 나타난다
