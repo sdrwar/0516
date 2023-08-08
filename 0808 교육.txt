@@ -1,0 +1,66 @@
+job = 리눅스의 at 처럼 한번 실행하면 사라지는 작업 시 사용
+cronjob = 리눅스의 cronset처럼 예약실행이 가능한 작업 시 사용
+
+■ReplicaSet Controller의 옵션 살펴보기
+-edit 사용하기: 이 옵션을 사용하면 새로운 pod가 생성되지만 기존의 레플리카-셋에서는 삭제가 된다.(edit등의 옵션은 수정을 하는데 이용하는 옵션명령어)
+-edit 옵션은 중요한 옵션이라고 한다(변경, 수정을 할 때 자주 사용되는 옵션)
+
+ㅁDaemonSet 사용하기에서의 Flunted 설명(flunted: 로그 수집기)
+-Elastic Search와 비슷한 개념이라고 한다(로그의 정보를 알려고 할 때 사용이 되고 쿠버네티스와 묶어서 사용된다)
+-쿠버네티스에서 DaemonSet은 클러스터 내의 모든 노드(또는 일부 노드)에 파드를 배포하는 데 사용
+-fluentd는 오픈 소스 데이터 수집기로, 로깅 및 이벤트 데이터를 처리하는 널리 사용되는 도구
+-일반적으로 로그 데이터를 수집, 처리, 필터링하고 다양한 목적지(예: Elasticsearch, HDFS, Amazon S3 등)로 전송
+
+ㅁStatefulSet Controller
+-statefulset.yaml 파일을 만들었을 때 kink:StatefulSet때문에 replicas를 3개를 만들었더라도 web-0,web-1,web-2처럼 서로 간의 상태 정보를 알 수 있고
+정보를 알기 때문에 생성된 순서대로 -뒤의 숫자가 따라 붙었다
+
+ㅁJob
+-생성한 job kind의 컨테이너의 값은 kubectl logs [pod의 이름] 으로 알 수 있다 (pod의 이름은 get pods로 정보를 보자)
+
+ㅁCronJob
+-yaml 파일 생성 시 작성한 schedule: "*/1 * * * *" 의 앞은 시 뒤의 /1은 분 등으로 읽을 수 있다(리눅스 할 때 잠깐 배웠던걸로 기억한다)
+
+■Kubernetes Deployment(5장에서 중요)
+-장점과 기능: 롤링 업데이트(하나하나 순차적으로 업데이트 해주는 기능), 블루그린(구버전: 블루, 신버전: 그린 이라 부른다), Canary
+-rollback = rollout undo / revision: 상세보기
+-rollout undo를 사용하면 --to- revision=번호를 이용하여 언제든지 rollback(이전 버전으로 돌아가는 기능)할 수 있다
+
+ㅁCanary
+-kubectl get deploy로 deploy를 확인 후 kubectl delete deploy nginx-deployment로 엔진x디플로이를 삭제를 한 뒤 canary를 테스트 하자
+-service는 deploy를 찾는다(유저가 :3xxx포트로 접속을 하면 deploy를 찾아 접속시켜주는 개념인듯..)
+
+ㅁblue/green
+-master에서 index.html파일을 생성한 후 cp를 이용하여 블루와 그린의 index.html파일을 복사해주어 내용을 변경해준다
+echo 'blue' > index.html
+kubectl get pods로 블루 그린의 포드 이름을 띄운 후
+kubectl cp index.html echo-version-blue-584133:/usr/share/nginx/html/index.html 
+그 후 master에 있는 index를 수정하여 green에 똑같이 cp해준다 
+
+■Object: Service
+-서비스 사용하면 Pod 가 클러스터내의 어디에 있는지 상관없이 고정된 주소(service ip)이용 접근
+-service의 ip가 pod로의 이용할 수 있게 한다
+-외부에서 접근할 때 Node port=>port=>Target port=>End point
+target port는 service가 pod를 찾을 때 찾는 port / target port와 endpoint(pod에서 사용하고 있는 작업 port)는 같아야 한다
+
+ㅁLoadbalancer(클라우드 서비스 aws, azure등의 로드밸런서를 자동으로 할당해주는 서비스)
+-AWS에서 지원해주지 않는지 External-IP를 설정하지 않으면, kubectl get svc -o wide 했을 때 external-ip가 <pending>(할당되지 않음)
+으로 나와 yaml파일에 external-ip를 worker1이나 2의 프라이빗아이피로 넣어 주었다(원래는 로드밸런서 서비스에서 yaml파일에 external-ip를 넣어주지
+않더라도 aws같은 클라우드 서비스들의 ip가 나와야 정상이지만, pending상태가 지속되어서 직접 yaml파일에 넣어주었다)
+-브라우저에서의 접속은 worker1이나 2의 퍼블릭ip:31508로 접속했다
+kubectl run network -it --image=c1t1d0s7/network-multitool --rm=true bash
+
+■ingress
+-ingress도 마찬가지로 nginx-ingress-1과 2의 index.html파일을 수정하여 cp한다
+kubectl cp index.html nginx2-7b9554bccd-9fpp7:/usr/share/nginx/html/index.html
+kubectl cp index.html nginx1-6488d47ff-dxnjb:/usr/share/nginx/html/index.html
+curl localhost:1이나 2의 port(kubectl get svc -o wide로 포트 번호 확인 가능)로 서로 다른 index.html파일을 확인할 수 있다
+
+wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.0-beta.3 /deploy/static/provider/cloud/deploy.yaml
+
+ㅁingress SSL(넘어감, 괜히설치함..)
+openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout tls.key -out tls.crt -subj "/ CN=foo.bar .com"
+
+kubectl create secret tls ingress-secret --key tls.key --cert tls.crt
+ㅁconfigmap-평문으로 구성
+ㅁsecret-base64로 인코딩
