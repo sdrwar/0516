@@ -1,0 +1,67 @@
+ㅁTaint & Toleration 
+-Taint는 Node 에 정의 하며 , Toleration 은 Pod 에 정의
+-label 삭제 시 명령어 끝에 - 을 붙이면 삭제하겠다는 뜻
+-실습 시 모든 파드 서비스 디플로이 노드까지 삭제 후에
+-kubectl label nodes worker1.example.com disktype- (worker2도 동일하게)
+-kubectl label nodes worker1.example.com core-
+-기존의 deploy를 삭제를 하고 pod-toleration.yaml을 실행한다(기존의 taint.yaml파일을 실행했을 때 이미 taint-app이라는 deploy가 생성이 되었기 때문)
+
+ㅁCordon & Drain
+-Cordon: 지정된 노드에 더이상 Pod 들이 Scheduling 되지 않도록 하기 위해 사용하는 명령어
+-설정 해제는 uncordon nod_name
+-scale명령어로 replicas=4로 pod를 4개로 생성을 했을 때 worker1에서는 pod들이 생성이 되지 않는 것을 확인했다
+-Drain: 지정된 노드에 있는 Pod 들을 다른 곳으로 이동 시키는 명령어
+-Drain 오류 중 하나는 Daemonset이 설정 되어있을 때 생기는데, 데몬셋을 해제하면 실행이 될 것이다(데몬셋은 모든 노드에 있어야 하기 때문에 해제하는 것)
+-drain 오류를 해결하고 worker2를 drain 설정을 하면 worker2에 있던 pod들이 worker1에 이동되는데, get pods -o wide로 자세히 보면
+기존에 생성되었던 worker2의 pod들의 IP가 woker1에서 다른 IP로 바뀐 것을 확인할 수 있다
+이를 통해 자세히보면 이동이 아닌 worker2에서 삭제 worker1에서 복제, 복사의 개념으로 볼 수 있다
+-해제 명령어도 똑같이 uncordon이다(일반적인 경우에는 drain보다는 cordon이 안전할 것 같다고 하심)
+
+ㅁnodeselector, affinity와 anti-affinity, taint와 toleration, cordon과 drain의 정리
+
+■Chapter12 Kubernetes 인증&권한 관리
+•Authentication : 접속한 사용자의 신분을 시스템이 인증하는 단계 신분증 확인 (인증)
+•Authorization : 사용자가 어떤 권한 가지고 어떤 작업할 수 있는지 확인하는 단계 (권한)
+-인증이 먼저, 그 후 권한을 확인
+-권한에서 중요한 것은 Role과 Resource
+-Role: 한 개의 Namespace 안에서만 유효(kubens에서 나오는 그 ns다)
+-ClusterRole: 클러스터 전체에서 유효
+-Bind: 할당
+-cat .kube/config에서 context 항목에서 Pre-defined Roles의 사용자 정보를 확인할 수 있다
+-쿠버네티스의 기본 Port는 6443을 쓰는데 server: https://172.31.28.124:6443항목에서 확인할 수 있다(TLS인증이 적용되어 있다고 한다)
+-Role과 Binding은 설명만 하고 넘어가셨다
+
+ㅁDeployment생성하기
+-kubens해서 scheduling삭제 후 default로 선택 후 vim으로 yaml파일을 생성했다(교재에서 순서가 바뀌었다)
+-verbs: 동사, get이나 list 같은 옵션을 넣어 옵션을 사용할 수 있게 만듦
+
+ㅁServiceAccount
+-교재에서는 kubectl get secret하면 admin user token dz8rr가 생성된 상태로 나오는데, 실습해보니 나오지 않아, 새롭게 생성 한 후에 진행했다
+-vim admin-token.yaml로 생성(user01-token의 user01이름을 admin으로 넣는 방식으로
+-먼저 서비스 어카운트(SA)생성 user01처럼 -> 그후 context 생성 등등 user01때 했던 것 처럼 admin-user라는 서비스 어카운트를 추가하여
+마지막에는 kubectl get secrets 했을 때 admin-user가 나와야 한다(user01때 처럼 순서대로 해야 꼬이지 않고 생성이 된다)
+
+ㅁ일반 사용자 생성(X.509 기반으로)
+-교재는 centos 기준이지만 우분투환경에서는
+useradd -m -d /home/linux linux
+passwd linux로 비밀번호를 12345로 넣어주었다
+그후 mkdir /home/linux/.certs ; cd /home/linux/.certs부터는 동일하게 했다
+
+■Chapter 13 Kubernetes Network & DNS
+-CNI와 CRI
+-CNI와 CNM
+-CNI drivers 중 우리는 Calico를 쓰고 있고 Weave Net이 인기를 끌고 있다고한다
+-kind: Deployment Pod를 생성하는 종류
+-coreDNS:클러스터 내부에서 사용하는DNS / upstream: 클러스터 외부에서 사용하는 DNS 
+ㅁ싱글노드: 같은 컨테이너 같은 pod내에서 아이피가 같더라도 포트번호로 핑이 되는지 테스트(실습 때는 다 됐는데, 강사님이 안되서 안됐을 때 하는 방법도 적어주셨다)
+ㅁ멀티노드
+-각기 다른 노드에서 네트워크 테스트 
+-노드를 다르게 만드려고 했을 때 taint 보다는 cordon으로 하는게 더 효율적이다
+ㅁService 네트워크 구현하기
+-pod 생성 전 모든 pod들을 삭제한다
+
+※쿠버네티스는 기본적으로 CNI Driver를 설치해줘야 pod에 할당이되어 사용이 가능하다(그래서 쿠버네티스 첫날에 Calico를 설치하고 진행했었다)
+
+■Chapter 14 Kubernetes Applications - WordPress
+-get svc -o wide로 나온 wordpress의 80:3xx번대 포트로 접속한다, get pods -o wide를 해서 wordpress의 node의 퍼블릭아이피:3xxx번대로 
+웹브라우저로 접속하면 워드프레스가 뜬다
