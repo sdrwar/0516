@@ -1,0 +1,45 @@
+■IaC-Ansible*(4장까지는 기초, 5장 이후 문법 등의 설명)
+-Infrastructure as Code: 소프트웨어 개발 원칙을 인프라 관리에 적용하는 방법론
+-Ansible: IaC의 도구 중 하나로 파이썬 기반의 오픈소스 플랫폼, 실무에서 주로 사용하는 툴
+-Playbook*: 코드
+-Inventory*: 대상
+-Ansible에서 알아야할 중요한 접속 방법: SSH
+-Inventory, Playbook작성, Inventory에서의 Mudule(기능) 호출 이 세가지가 중요
+-인벤토리 구성시 IP에 대한 정보는 상관없지만, 사용자이름으로 정의 했을 경우에는 HOST파일에 정보가 있어야 한다(ex. ssh- ~"ec2-user")
+-Playbook의 구조: Tasks->Play->Playbook의 상위 묶음 단위를 일컫는다
+-Roles는 Playbook과 별개로 있는 구조이고 Playbook에서 Roles를 불러온다
+-Ansible Tower(상용제품): 대규모로 사용할 때 좋다.(딱히 중요한 내용이 아니다)
+-Playbook 실행 - 멱등(Idempotent)*: 연산을 여러번 적용하더라도 결과가 달라지지 않는 성질
+-Snort: IDS 툴 중 하나이며, 실무에서 가장 자주 쓰는 툴이라고 함
+
+■chapter 3. Ansible 환경설정
+-AWS Server인스턴스 생성 시, Control 인스턴스와 같은 조건 입력 후 우측 인스턴스 갯수를 3개로 늘리면 3개의 Server가 만들어 진다
+-ansible-key가 있는 디렉토리로 이동 후 scp ansible-key root@213.0.113.3을 하면 윈도우에 있는 key파일이 리눅스에 옮겨진다
+
+127.0.0.1 localhost localdomain localhost
+172.31.37.121 control control.example.com
+172.31.36.21 servera servera.example.com
+172.31.37.45 serverb serverb.example.com
+172.31.47.111 serverc serverc.example.com
+
+root / 12345 / nana / nana
+
+-각 인스턴스에 nana 사용자 생성 후 mkdir .ssh 디렉토리 생성 후에 ssh-copy-id -i ~/.ssh/id_rsa.pub nana@servera
+sudo yum install vsftpd -y
+-vim ansible.cfg 설정 시 각 항목의 설명
+[defaults]
+inventory = ./inventory
+remote_user = nana
+ask_pass = false
+
+[privilege_escalation] ->권한 상승
+become = true -> 권한상승 가능여부
+become_method = sudo -> 권한상승의 명령어
+become_user = root -> 권한상승시 유저의 권한
+become_ask_pass = false -> 권한상승시 유저의 비밀번호 묻는 여부
+
+scp하기 전 vm웨어 실행 후 윈도우즈 pem 파일이 있는 디렉토리로 이동->scp ansible-key root@213~
+scp를 해서 윈도우즈에 있는 파일을 리눅스로 복사하는 것이나 xshell에서 키를 넣어 접속하는 방법이나 개념은 비슷하다.
+
+ansible ping 테스트 시 핑이 퍼미션 디나이가 뜨면 servera,b,c에서 chmod 700 .ssh를 하여 권한을 부여 하고 control 노드에서 테스트를 진행
+(control노드에서도 chmod 700 .ssh)
