@@ -1,0 +1,125 @@
+0816 교육은 챕터 4의 •ad-hoc 명령어 사용하기까지 했다고 함
+
+/etc/ssh/sshd_config 의 43번 라인도 주석을 삭제해주면 키를 통한 인증을 해서 ssh로 servera같은 노드에 접속할 때 비밀번호를 묻지 않는다
+
+교재에 나온 bespin = nana 사용자
+
+■4-3 ad-hoc 명령어(임시 명령어, 재사용을 하지 않는 명령어 playbook의 하위호환개념)
+1.ad-hoc명령어를 사용하기 위한 기본 설정 생성: ansible.cfg, inventory파일
+2.모듈 이용 ad-hoc 명령어 사용
+•ping & setup
+•shell & command
+•file
+•user
+•yum & service & systemd
+•copy
+•get_url
+
+ㅁsetup명령어: 대상 호스트의 팩트(facts)를 수집하는 데 사용, 예를들어 IP주소, 사용중인 OS, CPU 정보, 호스팅명 등
+-facts: 사용자가 만들지 않아도 사용할 수 있는 변수, 기본적으로 특별한 변수를 뜻한다(물론 사용자 fact로 변수를 만들 수는 있다)
+ㅁcommand: 리눅스 시스템에서 실행할 때 Shell을 호출하지 않고 단순히 명령어를 실행
+(shell 모듈과 달리 파이프, 리다이렉트 등의 Shell 구문을 사용할 수 없다)
+
+-ansible seoul -m shell -a 'id -a' -b --become-user=nana
+-ansible: ad-hoc을 사용, seoul: 대상 호스트 그룹을 지정, -m shell: 모듈로 shell을 사용하겠다는 의미, -a: argument, ad-hoc명령어로 전달할 인자를 정의
+(여기서는 id -a라는 인자가 사용), -b: become명령어와 동일, sudo나 su의 권한상승 매커니즘을 사용하여 명령을 실행
+--become-user=nana: 권한 상승 매커니즘을 이용하여, 특정 사용자로 명령을 실행하도록 지정
+(결과적으로 이 명령어는 "seoul" 호스트 그룹의 모든 서버에서 id -a 명령어를 사용자 A의 권한으로 실행하라는 의미)
+
+ㅁshell과 command모듈의 차이점
+ansible seoul -m command -a 'echo "Hello" > index.html' 명령어와, ansible seoul -m shell -a 'echo "Hello" > index.html' 명령어의 차이점
+->command 모듈은shell을 호출하지 않기 때문에 파이프(|), 리다이렉션(>), 변수등의 구문을 사용할 수 없다.
+
+ㅁfile 모듈
+-파일, 디렉터리, 또는 심볼릭 링크의 속성(권한, 소유자, 그룹 등)을 관리할 때 사용
+-Ad-hoc 명령어로 file 모듈을 사용하면 특정 작업을 곧바로 실행할 수 있다
+•path: 대상 파일 또는 디렉토리의 경로를 지정
+•state: 원하는 상태를 지정, 가능한 값은 file, directory, link, absent, touch, 기본값은 file
+•mode: 파일 또는 디렉토리의 권한을 지정(ex.0644=rw-r--r--)
+•owner: 파일 소유자를 지정
+•group: 파일 소유 그룹을 지정
+•src: state가 link인 경우, 심볼릭 링크의 원본을 지정하는데 사용(심볼릭 링크: 한 파일이나 디렉터리를 다른 파일이나 디렉터리에 대한 참조로 연결)
+-touch 옵션: 리눅스의 touch 옵션과 마찬가지로 해당 디렉토리나 파일이 없으면 새로 생성하고, 이미 생성되어 있으면 타임스탬프를 현재 시간으로 업데이트 한다
+•dest = path와 기능이 동일하다
+
+ㅁuser 모듈
+-사용자를 생성하거나 삭제할 때 쓰는 모듈
+ㅁget_url
+-파일을 다운로드 할 때 쓰는 모듈	 
+■Chapter 5. Playbook
+ㅁplaybook 문법 구조
+시작은 하이픈 3개로 시작 (---)
+-hosts: 대상 호스트 서버들 (인벤토리에 있는 정보에서 가져온다)
+
+Playbook 문법 설명 – task 중
+service:
+name=httpd
+state=running를 수정해야 한다
+service:
+name: httpd
+state: running
+
+6. vars 섹션에서 정의한 vhost 변수를 실행 라인들에 아래와 같은 형태로 사용가능 
+template:
+src=somefile.j2
+dest=/etc/httpd/conf.d/{{ vhost }} 에서도 구분자를 콜론으로 사용해야 한다
+
+template:
+src: somefile.j2
+dest: /etc/httpd/conf.d/{{ vhost }}
+
+ㅁansible의 작업은 순차적으로 이루어진다
+a->b-c->d (중간에 오류가 나면 다시 실행하여 다음 작업을 실행하지 못한다, 테라폼과의 차이점, 테라폼은 순차적으로 실행되지 않고 동시에 이루어 진다)
+
+ㅁplaybook 실행
+실행 방법에서의 --syntax-check는 문법체크의 명령어
+-C: 예행연습, -v: 상세정보
+-dest에서 present: 설치, absent: 삭제
+
+-ansible -v 옵션을 이용해 yaml파일을 볼 때
+-ansible설정파일에서의 찾는 우선순위 3가지: 현재 디렉토리의 설정파일, 사용자(nana)의 홈디렉토리, /etc/ansible의 디렉토리에서 찾고 없으면 에러를 낸다
+-ansible.cfg 파일의 경우 잘 만들어졌으면 어떤 디렉토리라도 해당 cfg파일을 복사하여 사용할 수 있다
+-분홍색으로 나오는 경고 메시지의 경우는 
+[defaults]
+inventory = ./inventory
+remote_user = nana
+ask_pass = false
+interpreter_python = /usr/bin/python
+command_warnings = False
+
+[privilege_escalation]
+become = true
+become_method = sudo
+become_user = root
+become_ask_pass = false
+이런 식으로 커맨드 워닝을 false 상태로 만들고 interpreter경우는 파이썬의 버전 문제 때문이라도 3버전이 아닌 그냥 python으로 적어둔다
+-copy:
+content의 옵션으로 index.html에 들어갈 구문을 직접 작성할 수 있어 index.html을 만들어 cp하는 번거로움이 사라진다
+*copy의 src와 content의 옵션은 동시에 사용할 수 없다
+content: 소스가 없을 경우 직접 입력이 가능한 옵션
+
+httpd의 포트가 사용중이라고 뜨면 ansible servera -m shell -a 'systemctl stop httpd'의 명령어로 수동으로 정지 시키고 contol 노드에서 계속 하도록 하자
+
+■chapter 6 변수 관리
+-변수를 사용할 때, 변수 앞뒤로 스페이스로 띄워둬야한다
+-가장 많이 사용하는 방법은 4. key:value의 방식
+-webserver2.yaml파일을 작성할 때 파이썬3가 아니라 파이썬2로 넣는다, role도 마리아디비가 아니라 http 그대로
+-epel 설치를 하지 따로 하지 않으면 (서버a) 패키지 설치가 제대로 이루어지지 않을 때가 많다
+
+ㅁfact관리
+-fact는 기본적으로 특별한 변수, 사용자가 만들지 않아도 사용할 수 있는 변수
+-fact 정보를 수집할 수 있게 해주는 명령어 setup
+-fact 실습은 6번의 매직변수만 실습 함
+
+ㅁsecret 관리*(docker와 kubernetes에서의 secret과 개념이 비슷하다)
+-ssh에서 프라이빗키와 퍼블릭키 두가지를 사용하는 이유는 암호화와 복호화에 쓰이는 키가 다르기 때문이다(id_rsa:프라이빗, id_rsa.pub:암호화)
+-프라이빗키로 암호화를 하면 퍼블릭키로 복호화를, 퍼블릭키로 암호화를 하면 프라이빗키로 복호화를 할 수 있다
+-다만 secret에서는 암호화와 복호화하는키가 같다(자물쇠라고 생각하면 편하다), 이를 secret key라고 부른다(대칭키)
+-a라는 사용자가 퍼블릭키를 b사용자에게 공유하면 a라는 사용자는 시크릿키를 프라이빗키로 암호화를 할 수 있고, 
+b사용자는 a사용자에게 받은 시크릿키를 퍼블릭키로 복호화 할 수 있다(개념이 약간 어렵다)
+
+[bespin@control ansible]$ ansible-vault create secret.yaml
+New Vault password: PaSSw0rd <- 이 경우 passw0rd가 시크릿키가 된다.
+
+6-4종합 실습 하기 전 web-delete.yaml을 실행 후 하기
+■chapter 7.
