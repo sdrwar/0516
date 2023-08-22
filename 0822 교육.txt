@@ -1,0 +1,101 @@
+■aws ec2를 ansible로 생성하기
+-작업 전 생성한 인스턴스, websg 보안그룹, 생성한 서브넷 삭제 후 작업(master 노드에서)
+-수정한 부분 ec2_group:은 amazon.aws.ec2_security_group등으로 바뀌었다(나중에 네이버 박스에 다시 올리신다고 함)
+
+■Terraform(ansible과 비슷하지만, 더 쉽다)
+※제05장 Terraform 사용법 - AWS EC2 & VPC & AS-LB (프로젝트시 제일 많이 쓰일 것으로 예상됨)
+
+ㅁ테라폼 아키텍처
+-Providers: ansible의 inventory같은 역할
+-Provisioners: ansible의 shell, command와 같은 모듈 역할
+-Terraform manifest files: ansible의 .yaml파일의 역할
+
+ㅁState file(상태 파일) - Ansible과 다른 Terraform의 특징
+-
+-상태 파일은 세이브(로컬이랑 다른 곳에도)하는 것이 중요
+
+ㅁTerraform Workflow
+-Plan: ansible의 -C옵션과 같이 모의 실행
+-Apply: 실제 실행
+ㅁTerraform에서의 삭제는 ansible에서 코드를 absset를 추가하는 것과 달리 apply를 한 것을 destroy명령으로 삭제를 할 수 있다
+ansible과의 차이점
+-init 단계: Terraform 작업을 위한 초기화를 수행한다, Terraform 프로젝트를 초기화하고 필요한 백엔드 구성 및 모듈 등의 의존성을 설정한다
+Terraform에서는 apply를 하기 위해 반드시 초기화를 위해 init을 해주는 작업을 한다(디렉토리를 바꾸는 작업에도 init을 해주어야 한다)
+그래야 apply가 문제없이 동작한다고 한다
+-validate 단계: 검증하는 단계
+ㅁ선언적 대 절차적(Declarative vs. Procedural): ansible에서는 yaml파일에 작성한 순서대로 작업을 하는데, 테라폼에서는 순서가 중요하지 않다.
+
+■Terraform 설치
+-aws configure에서 아웃풋 포맷은 json이나 yaml로 지정할 수 있는데, yaml파일을 사용해봤기 때문에 yaml로 설정을 하였다
+-# access_key = "my-access-key" # secret_key = "my-secret-key" 부분에 실제 엑세스 키 값, 시크릿 키 값을 작성해준다
+ㅁVScode 설치는 패스
+
+■Terraform 기본 사용법
+-Terraform apply 실행 시 주의점과 ansible과의 차이점
+>terraform apply시 *.tf를 실행한다(파일을 지정할 수 없고 해당 디렉토리에 있는 모든 tf파일을 실행하니 중요한 tf파일은 다른 디렉토리로 옮겨야한다)
+>ansible은 ansible-playbook --syntax-check 파일이름.yaml과 같이 실행할 파일을 지정할 수 있었다
+-terraform apply시  Enter a value:를 묻는데 yes를 입력해야 실행이 된다(입력할 수 있는 값도 yes 밖에없다)
+-fmt: 파일의 들여쓰기를 해준다
+-apply후 필요가 없어지거나 수정을 해야하면 destroy를 하고난 후에 main.tf를 수정해야 destroy의 오류가 나지 않는다
+-resource "local_file" "abc" 의 읽는 방법: 로컬에서 파일을 생성하고 파일의 이름은 abc로
+-apply나 destroy시 yes를 입력하기 귀찮으면 -auto-approve 명령어를 추가
+
+ㅁ3.2 종속성
+ㅁ암시적 종속성
+-def의 content 구간에서 content = local_file.abc.content로 따옴표 없이 작성해야 abc.txt def.txt파일의 내용이 동일하게 나온다
+ㅁ강제적 종속성
+-depends_on의 명령 코드로 명시한 파일이 생성되지 않으면 해당 리소스를 생성할 수 없게 할 수 있다.
+resource "local_file" "def" { depends_on = [ local_file.abc ] content = "456!" filename = "${path.module}/def.txt"
+-def의 리소스는 local_file.abc(abc.txt리소스)가 생성되지 않으면 생성 되지 않고 생성이 되면 content = 456! (내용이 456!)의 def.txt가 생성이 된다
+
+ㅁ7.프로비저너(Provisioner)
+"local-exec": 테라폼에서의 실행 명령문이며, ansible처럼 inventory안에 있는 노드들을 지정하여 실행하지 않고 테라폼으로 작업하고 있는 컴퓨터안에서만 실행
+
+■Terraform Mudules 관리
+-ansible의 roles와 비슷한 개념이다
+-root mudule과 child module이 중요한데 그 중 child module이 중요(role의 변수가 있는 곳이라 중요)
+-root(부모)모듈은 child(자식)모듈을 호출하고 
+-자식 모듈 디렉토리(테라폼-랜덤-pwgen)에서 terraform init을 하고 부모 모듈 디렉토리(basic)에서 또 init
+
+■Terraform 사용법 - AWS EC2 & VPC
+-aws 디렉토리에서 작업
+-resource "aws_instance" : 프로바이더-인스턴스
+-t2.small로 수정하여 작업 
+-user_data = <<-EOF: 최초 실행시 실행할 명령 (ec2인스턴스 생성 시 고급 펼쳐서 사용자 명령어 #!/bin/bash와 기능이 같은듯)
+-ami의 os 버전에 따라서 dnf명령어가 없을 수도 있다. 이런 경우에는 리소스.tf 파일에서 dnf명령어를 yum으로 수정을 하자
+-디스트로이하고 다시 인잇한 후에 어플라이(yum으로 하니 되었다)
+※ 아무것도 없는 상태에서 인스턴스를 생성하는 등의 작업은 테라폼이 낫고, 만들어 둔 인스턴스 내에서 프로그램등을 설치하고 관리하는 데에는 ansible이 낫다
+※ 짧은 시간안에 실력향상을 하려면 로그를 많이보는 연습을 해야한다
+
+ㅁkeypair 사용하기
+-aws 디렉토리에서 ssh-keygen -t rsa -b 4069 -C {nana@naver.com} -f "terraform-key" -N "" 명령어로 rsa키를 생성한 후 
+(nana@naver.com의 이메일주소는 중요하지않고, nana라는 사용자가 키를 만들었다라는 명시가 되어있어 중요)
+-vim instance.tf으로 생성하지 않고 resource.tf에서 추가하여 작업
+-terraform-key를 key.pem으로 변경 후에 chmod 400으로 권한 수정을 한 후에 ssh -i "테라폼키" ec2-user@퍼블릭아이피로 ssh 접속을 확인
+ㅁ기존 키페어 사용하기
+-chown nana.nana ansible-key로 소유권을 root가 아닌 nana로 설정을 한 후에 작업
+-chmod 400 ansible.key로 권한 바꾸는 기본적인 것 잊지 말기
+-ssh -i "ansible-key" ec2-user@13.229.214.219로 테라폼에서 생성한 ec2를 ssh 접속 확인
+
+ㅁdefault SecurityGroup 정의하기
+-data "aws_vpc" "default" { 
+  default = true (vpc를 여러개 사용할 경우 이 부분에 true가 아닌 사용하는 vpc-id를 넣어준다, 기본값으로만 사용하고 있으면 true그대로)
+data "aws_security_group" "default" { 
+  name = "default" (이 부분도 마찬가지로 보안그룹 중 해당 vpc에서 사용하는 보안그룹 이름으로 바꾸고 디폴트로 사용 중이면 그대로 디폴트로)
+-vim instance에서 변경하라는 것은 resource에 내용 있으니 리소스.tf에서 변경
+-생성된 인스턴스로 ssh 접속을 하여 체크를 해보자(ansible.key로 하였다) 
+
+ㅁVPC생성하기
+-vpc 생성은 쉽다, 중요한 것은 subnet 생성
+-count = length(var.public_subnet): count를 퍼블릭 서브넷에서 생성한 길이(숫자)만큼 만든다
+-cidr_block = element(var.public_subnet, count.index): cidr블락은 var변수(퍼블릭서브넷)에서 정해진 대로 count.index: 순서대로 만든다
+-mv 리소스.tf를 교재대로 인스턴스.tf로 바꾼다 mv 기존파일이름 바꿀파일이름
+-싱가포르는 AZ가 3개이니 ap-southeast-1d는 삭제한다 (variable.tf에서)
+
+
+※자격증 관련
+-aws 솔루션 아키텍처: 온프레미스를 aws로 구성하는 방법을 알아야한다
+-ccna: 네트워크 관련 자격증 
+취득 목표
+눈을 낮추면, si? sl? 기업내 상주하는 하청 비슷한 개념으로도 취업 가능
+-docker, kubernetes, container, pod의 개념만 알아도 되고, 중요한 것은 aws니 aws위주로 자격증 취득
