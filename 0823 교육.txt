@@ -1,0 +1,28 @@
+■AWS EKS(Elastic Kuberbetes Service)
+-AWS 클라우드에서 쿠버네티스 클러스터를 손쉽게 실행, 관리, 확장할 수 있게 해준다
+- EKS를 사용하면 수동 설정, 관리, 운영 및 유지 관리에 대한 오버헤드를 줄이고, 운영 효율성을 향상
+
+ㅁEKS 작동방식
+-AWS EKS 클러스터(Master node)로 AWS Far gate, Amazon EC2(Worker node)를 생성한다.
+-AWS Fargate: 서버리스, 컨테이너만 실행한다
+
+-etcd: 쿠버네티스의 데이터베이스
+-EKS의 VPC를 구성하는 여러가지 방법들이 있다(4~6page)
+-EKS 설치시 구조 이해
+->예전 쿠버네티스 실습때에는 마스터와 클라이언트를 같은 PC에 설치하고 워커노드를 EC2로 두었지만
+이번에는 클라이언트를 PC에 EC2에 마스터노드와 워커노드들을 설치하는 것이다
+명령어의 진행 순서: 클라이언트에서 마스터노드로 kubectl 명령어를 보내면 마스터노드에서 워커노드로 해당 명령어를 전달하는 것이다
+-proxy: 워커노드에서 네트워크를 담당
+-CNI(container network interface): 쿠버네티스 실습 때에는 Calico를 사용했다 (kube-calico)
+curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.1/2023-04-19/bin/linux/amd64/kubectl
+ㅁEKS 설치 (GUI)
+-마스터(213.0.113.3에서 root)로 로그인 한 후에 dnf install epel-release 설치 후 dnf install awscli -y 설치
+-교재의 순서대로 role추가 및 클러스터 생성 후 클러스터 정보 [상태 '생성 됨' ]상태에서 다음 진행
+-클러스터 생성 시 생성한 리전 확인
+(aws eks --region ap-northeast-2 update-kubeconfig --name FirstEKSCluster의 명령어를 입력할 때  생성된 리전이 일치하여야 하므로)
+-aws eks --region ap-southeast-1 update-kubeconfig --name First-EKS-Cluster
+-워커노드 생성 작업 시 노드 그룹 조정 구성에서 최대크기를 보통 4로 한다고 해서 4로 늘렸음, 다음으로 넘어가서 서브넷 구성을 보면 자동으로 생성된 것을 확인
+
+■미니 프로젝트 관련
+-만든 코드들을 git에 올리지 말고, 문서작업(word 같은)을 하여 남겨두라고 함, 전체적인 작업도 마찬가지
+-프로젝트 계획서를 매일 작성하고 변경점이 있으면 업데이트 하라고 함
