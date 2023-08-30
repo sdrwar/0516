@@ -1,0 +1,5 @@
+[Terraform Cloud Token]
+https://app.terraform.io/app/settings/tokens?source=terraform-login - 사이트
+
+토큰 이름
+5utxjhYHbzn0Aw.atlasv1.QazQNXFl3zpvrIE0uxlGzu3IwNXrpFxzEy1YF9BUgj8X4I1qJAzFzRwJgYHzjpyKVM8

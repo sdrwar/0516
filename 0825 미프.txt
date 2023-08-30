@@ -1,0 +1,11 @@
+ㅁTerraform을 이용한 EKS 구축 (2)
+-각종 변수들이 중복되어, plan 단계에서 에러가 계속 발생함
+-variable, main, endpoint, cluster등의 tf 파일을 두 개의 tf 파일로 생성하여 새로운 디렉토리에서 init후 plan
+-vpc의 특정 이름과 서브넷의 CIDR블록을 지정하여 plan을 진행
+-plan 성공 후 apply 진행
+-프라이빗 서브넷에서 nat게이트웨이와 route 문제가 지속되어, 프라이빗이 아닌 퍼블릭 서브넷에서만 노드 생성을 하고자 tf 파일의 내용을 수정하여, nat게이트
+웨이와 route관련 코드들을 삭제하고 IAM role과 VPC, 인스턴스 id를 내용에 추가, 수정하여 plan->apply
+-IAM 권한을 정상적으로 불러오지 못해 새롭게 iam_role을 생성
+
+-0826 미프-
+-module을 이용한 새로운 aws EKS 구축
