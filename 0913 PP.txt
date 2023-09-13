@@ -1,0 +1,18 @@
+■API를 이용한 AWS EC2 구축 및 AWS 서비스 사용해보기
+-최종 목표: 전기 자동차 충전소의 API를 이용하여 웹페이지 구성(WAS: Web Application Server를 이용하는 것도 도움이 될 것 같음)
+---
+Amazon Location Service: 서울 리전에는 서비스 되지 않아 네이버나 카카오 맵 API를 이용한 지도 구축이 더 수월할 것 같음
+---
+1. EC2로 웹서버 구축: Apacche나 Nginx를 설치하여 웹서버 구축
+2. 백엔드: Python으로 백엔드 구축
+3. 데이터베이스: MySQL, MariaDB등의 DB구축
+---
+-EC2, VPC, 보안그룹 생성 (Project - ssh, http 위치무관 허용)
+-Xshell이 만료되어 MobaXterm으로 ssh 작업
+-리눅스2 설치된 EC2에 접속 후 yum update 및 amazon-linux-extras install epel로 레파지토리 설치, nginx설치
+-nginx restart 후 퍼블릭아이피로 접속하여 웹서버 설치 확인(index.html), aws-cli 설치(aws --version로 awscli 버전 확인)
+-AWS Beanstalk: 웹서비스 배포하기 좋은 AWS 서비스(AppRunner는 컨테이터화 된 앱배포 시 사용)
+-python, pip 설치
+-vscode로 flask import 및 api 주소 작성 후 ec2에 파일질라를 이용한 복사
+-단순히 복사한 후 :8000번 포트로 접속하니 접속 실패(api 주소가 테스트 되지 않음)
+-sudo pip install flask requests로 ec2에 flask 설치
