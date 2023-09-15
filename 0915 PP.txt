@@ -1,0 +1,5 @@
+-다음 주 까지 프로젝트 계획서 길고 상세하게 작성해서 강사님한테 제출(카카오톡)
+-활용 가능한 aws 서비스 ec2, aws beanstalk, WAF등 필요한 건 더 생각해보기
+-활용할 기술 스택들 python, flask, 
+아직 구축을 하지 못했더라도 어떻게 할 것인가를 적는 계획서라는 걸 참고
+-Tomcat(WAS), NginX or Apache등
